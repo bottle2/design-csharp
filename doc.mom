@@ -141,21 +141,71 @@ organizar manualmente classes do C#, para aumentar a velocidade de compilação 
 melhorar a organização do código pela ação do próprio modificador
 \*[CODE]internal\*[CODE X].
 .HEADING 2 "Instanciação"
+.PP
+struct vs class
+.PP
+ValueType
+.PP
+ref e stackalloc
 .HEADING 2 "Interfaces"
+.PP
+Implementação padrão
+.PP
+Herança-múltipla
+.PP
+Interface principal
+.PP
+Reuso de código (zero)
+.PP
+Métodos estáticos sobreescrevíveis.
 .HEADING 2 "Classes aninhadas"
+.PP
+São bastante simples, literalmente uma classe declarada dentro de outra.
+Parecido com namespace. Acessibilidade muda.
+.PP
+Excelente forma de organizar código, tão legal quanto funções aninhadas.
 .HEADING 2 "Classes anônimas"
 .PP
 É possível criar objetos com atributos arbitrários, e fazer vetores destes, sem
-declarar um tipo antes. Diferente do Java, não é possível que esse objeto
-extenda uma classe e sobreescreva seus métodos.  No geral, não têm muita
-serventia. Seu uso é de mau gosto, bem como todos os usos de \*[CODE]var\*[CODE X].
+declarar tipos antes. Diferente do Java, não é possível que esse objeto extenda
+uma classe e sobreescreva seus métodos.  No geral, não têm muita serventia. Seu
+uso é de mau gosto, bem como todos os usos de \*[CODE]var\*[CODE X].
 Geralmente é encontrado em gambiarras feitas correndo, como alguma serialização
 de dados, usando muita reflexão por sinal:
 .QUOTE
 .CODE
-XXX
+using System.Text.Json;
+
+double xMin = XXX;
+double yMin = XXX;
+double xMax = XXX;
+double yMax = XXX;
+
+Console.WriteLine(JsonSerializer.Serialize(new
+{
+    type = "FeatureCollection",
+    features = new[] { new {
+        type = "Feature",
+        geometry = new
+        {
+            type = "Polygon",
+            coordinates = new[] { new[]
+            {
+                new[] { xMin, yMin },
+                      [ xMin, yMax ],
+                      [ xMax, yMax ],
+                      [ xMax, yMin ],
+                      [ xMin, yMin ],
+            }}
+        },
+        properties = new { id = 0 }
+    }}
+}));
 .QUOTE END
 .HEADING 2 "Tipos genéricos"
+.PP
+Não há overload de tipos genéricos, eles são diferenciados em IL pela
+quantidade de argumentos. Então, é preciso usar nomes de tipo diferentes.
 .HEADING 2 "Traits"
 .PP
 Do modo como o C# evoluiu, emergiu um sistema de \fItraits\fP bastante curioso.
