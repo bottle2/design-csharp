@@ -23,6 +23,8 @@ general purpose object-oriented language.” At the time, it could have done
 worse thank looking like Java in order to achieve those goals.
 .HEADING 1 "Elementos da linguagem"
 .HEADING 2 "Atributos e métodos"
+.PP
+A partir, disso, é possível simular enums.
 .HEADING 2 "Propriedades"
 .PP
 Três utilidades particularmente interessantes são: 1) depuração, 2) retro, 3)

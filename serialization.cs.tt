@@ -1,0 +1,14 @@
+class Player
+{
+    int health;
+    int experience;
+    Weapon primary;
+    Item secondary;
+    
+    Skill[] skills = new Skill[9];
+    Item[][] inventory = new Item[8][10];
+}
+
+class sealed Skill { }
+class Item { }
+class sealed Weapon : Item { }

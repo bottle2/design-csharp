@@ -1,0 +1,48 @@
+.TITLE "O preprocessador T4"
+.AUTHOR "Bento Borges Schirmer"
+.PRINTSTYLE TYPESET
+.PAPER A4
+.L_MARGIN 3c
+.R_MARGIN 2c
+.T_MARGIN 3c
+.B_MARGIN 2c
+.PT_SIZE 12
+.JUSTIFY
+.START
+.PP
+.HEADING 1 "Casos de uso"
+.PP
+Todos relacionados a jogos de computador, mas todos conceitos se
+aplicam a aplicações comerciais ou científicas.
+.HEADING 2 "Serialização"
+.PP
+Suponha que um jogo de computador tenha uma funcionalidade de salvar
+uma partida, o que requer salvar em disco os dados do jogador, e
+carrega-lo.
+.HEADING 2 "Enumerações do Java"
+.PP
+A grande vantagem é que os objetos tem nome acessível por código.
+.PP
+Enumerações Java é uma das construções mais poderosas.
+.PP
+Considere esse exemplo em Java:
+.PP
+Infelizmente, não é possível traduzir isso de modo idiomático em C#
+.PP
+A patente das enumerações do Java sugere que a implementação é um monte de switch.
+.PP
+Desse modo, o seguinte template:
+.PP
+Gera o seguinte:
+.PP
+Com isso, podemos usar:
+.HEADING 2 "Hierarquia de struct"
+.PP
+.HEADING 2 "Boilerplate"
+.PP
+Suponha que um jogo precisa iniciar vários componentes antes de uma
+fase começar, e os mesmos devem ser destruídos após a fase terminar ou
+o jogador morrer ou sair. Finalmente, há uma ordem entre os
+componentes que deve ser respeitado, ou melhor ainda, processados em
+paralelo para usufruir de multiprocessadores.
+.PP

@@ -1,0 +1,26 @@
+struct Combatant
+{
+    int health;
+    int exp;
+}
+
+struct Wave
+
+#if false
+interface IItem {
+    string Name   { get; set; }
+    float  Weight { get; set; }
+    float  Value  { get; set; }
+}
+
+struct record Armor(
+    float BaseDefense,
+    Dictionary<Element, float> Defenses
+) : IItem;
+
+struct record Weapon(
+    Dictionary<Element, 
+) : IItem;
+
+struct record Element(string Name, string Description, Color Color);
+#endif

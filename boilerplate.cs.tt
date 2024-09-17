@@ -1,0 +1,10 @@
+<#
+Component Level       = new();
+Component Entities    = new(Level);
+Component Quests      = new(Entities);
+Component Physics     = new(Level, Entities);
+Component Pathfinding = new(Entities);
+Component Render      = new();
+
+struct record Component(Component[] ...Dependencies);
+#>
