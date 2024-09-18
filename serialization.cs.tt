@@ -1,14 +1,63 @@
-class Player
+double weight = 54;
+double mass = weight / Planet.Earth.SurfaceGravity();
+
+foreach (Planet p in Enum.GetValues(typeof(Planet)))
 {
-    int health;
-    int experience;
-    Weapon primary;
-    Item secondary;
-    
-    Skill[] skills = new Skill[9];
-    Item[][] inventory = new Item[8][10];
+    Console.WriteLine($"Weight on {p} is {p.SurfaceWeight(mass)}");
+}
+<#+
+record struct Planet(string Name, double Mass, double Radius);
+#>
+<#
+Planet[] planets = {
+    new("Mercury", 3.303e+23, 2.4397e6 ),
+    new("Venus"  , 4.869e+24, 6.0518e6 ),
+    new("Earth"  , 5.976e+24, 6.37814e6),
+    new("Mars"   , 6.421e+23, 3.3972e6 ),
+    new("Jupiter", 1.9e+27,   7.1492e7 ),
+    new("Saturn" , 5.688e+26, 6.0268e7 ),
+    new("Uranus" , 8.686e+25, 2.5559e7 ),
+    new("Neptune", 1.024e+26, 2.4746e7 ),
+    new("Pluto"  , 1.27e+22,  1.137e6  )
+};
+#>
+enum Planet
+{
+<# foreach (ref readonly Planet p in planets.AsSpan()) {#>
+    <#= p.Name #>,
+<#}#>
 }
 
-class sealed Skill { }
-class Item { }
-class sealed Weapon : Item { }
+static class PlanetExtensions
+{
+    // In kilograms.
+    public static double Mass(this Planet p) => p switch
+    {
+<# foreach (ref readonly Planet p in planets.AsSpan()) {#>
+        Planet.<#= p.Name #> => <#= p.Mass #>,
+<#}#>
+        _ => throw new ArgumentOutOfRangeException(nameof(p)),
+    };
+
+    // In meters.
+    public static double Radius(this Planet p) => p switch
+    {
+<# foreach (ref readonly Planet p in planets.AsSpan()) {#>
+        Planet.<#= p.Name #> => <#= p.Radius #>,
+<#}#>
+        _ => throw new ArgumentOutOfRangeException(nameof(p)),
+    };
+
+    // Universal gravitational constant (m^3 kg^-1 s^-2).
+    const double G = 6.67300E-11;
+
+    public static double SurfaceGravity(this Planet p)
+    {
+        return G * p.Mass() / (p.Radius() * p.Radius());
+    }      
+
+    public static double SurfaceWeight(this Planet p, double otherMass)
+    {
+        return otherMass * p.SurfaceGravity();
+    }
+}
