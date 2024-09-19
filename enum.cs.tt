@@ -5,9 +5,7 @@ foreach (Planet p in Enum.GetValues(typeof(Planet)))
 {
     Console.WriteLine($"Weight on {p} is {p.SurfaceWeight(mass)}");
 }
-<#+
-record struct Planet(string Name, double Mass, double Radius);
-#>
+
 <#
 Planet[] planets = {
     new("Mercury", 3.303e+23, 2.4397e6 ),
@@ -61,3 +59,6 @@ static class PlanetExtensions
         return otherMass * p.SurfaceGravity();
     }
 }
+<#+
+record struct Planet(string Name, double Mass, double Radius);
+#>

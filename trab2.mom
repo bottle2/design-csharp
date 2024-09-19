@@ -1,5 +1,6 @@
 .TITLE "O preprocessador T4"
 .SUBTITLE "Trabalho 2"
+.ATTRIBUTE_STRING ""
 .AUTHOR "Bento Borges Schirmer"
 .PRINTSTYLE TYPESET
 .PAPER A4
@@ -11,15 +12,107 @@
 .JUSTIFY
 .START
 .PP
-Suponha que um jogo de computador tenha uma funcionalidade de salvar
-uma partida, o que requer salvar em disco os dados do jogador, e
-carrega-lo.
+A tecnologia apresentada neste relatório é o Text Template
+Tranformation Toolkit, abreviada T4, e é usada para geração de texto
+em tempo de compilação ou tempo de execução. A ferramenta foi criada
+em 2005 pela Microsoft para o Visual Studio. O nome T4 se assemelha
+com o da ferramenta UNIX m4, que remonta 1977, e que serve os mesmos
+propósitos. No entanto, T4 e m4 diferem fundamentalmente, no sentido
+de que m4 funciona avaliando macros recursivamente, enquanto T4
+interpola livremente texto corrido e código em C# ou Visual Basic, de
+modo muito parecido com PHP. Não se sabe se as similaridades entre T4,
+m4 e PHP são acidentais ou premeditadas.
+.PP
+O T4 é apresentado neste relatório gerando código para simular
+enumerações do Java em C#. Geração de código permite resolver de modo
+sucinto e eficiente uma gama de problemas que é impossível ou
+intratável de expressar idiomaticamente na maioria das linguagens de
+programação. No caso das enumerações do Java, elas viabilizam associar
+dados e comportamento à constantes de enumeração, o que permite
+modelar enormes porções de dados estáticos de domínio fixo.
+.PP
+Outro uso de geração de código é serialização de dados.
+É bastante óbvio que as APIs do .NET contemplam unicamente outros
+sistemas também construídos com .NET, o que faz parte de uma visão
+maior de ser um ecossistema, 
+mas na prática protocolos e formatos de arquivo
+seguem convenções únicas para \fIendianness\fP, codificação de
+\fIstring\fP e de objetos, limitando a serventia das APIs do .NET ou
+da Unity.
+
+que fogem do ecossistema C# e que atendem a uma rede aberta. Isso é
+verdade mesmo em sistemas proprietários, onde diferentes atores são
+implementados com linguagens e \fIframeworks\fP diversas.
+sistemas precisam se comunicar e
+trocar arquivos com sistemas feitos em linguagens e 
+diferentes, o que limita a utilidade do .NET. Para se salvar, é
+possível usar geração de código para automaticamente interpretar e
+montar pacotes de rede, ou ler e escrever automaticamente arquivos,
+
+privilegiam
+comunicação entre sistemas autorados em .NET, seguindo várias
+convenções únicas. Porém, na prática, protocolos e formatos de
+arquivos são padronizados para comunicação aberta, ou pelo menos
+concordam em formatos acessíveis para realizar isso.
+Diante disso, ainda que o C# e o .NET realizem um trabalho enorme, com
+serialização automática, estes nunca 
+Ainda que o
+\&.NET forneça várias APIs para comunicação entre sistemas .NET, na
+prática sistemas precisams e comunicar com , respeitando detalhes como
+\fIendianness\fP, codificação de \fIstrings\fP e objetos.
+, especialmente
+em protocolos e formatos de arquivos.
+em sistemas
+heterogêneos. Gerando código, é possível facilmente atribuir um
+identificador à objetos estáticos
+
+Ainda, é possível simplificar muito \fIboilerplate\fP, pois a partir
+de uma única lista, é possível 
+gerar atributos em um tipo e métodos para iniciá-los e desativá-los em
+massa, ou declarar métodos em massa.
+
+Finalmente, um uso mais curioso é simular hierarquia entre
+\*[CODE]struct\*[CODE X], pois ao usar 
+o que é necessário em código compilado com
+Burst da Unity, que limite o C# a \fIsubset\fP conhecido como HPC#,
+que entre outras limitações, proíbe o uso de tipos de referência,
+basicamente todas as classes.
+.PP
+Os problemas discutidos podem sim ser resolvidos usando reflexão ou
+anotações de compilador, porém a ineficiência da reflexão é notória, e
+seu uso ofusca o comportamento do programa com efeitos colaterais não
+óbvios.  Em contrapartida, código gerado é muito legível e interage
+adequadamente com IntelliSense, permitindo inspeção e depuração fácil.
+.PP
+Neste relatório, T4 é invocado pela linha de comando para transformar
+um \fItemplate\fP em um código auto-contido, que é então executado
+diretamente, porém em um projeto maior, T4 faz parte do sistema de
+\fIbuild\fP e gera código de modo transparente, conforme
+\fItemplates\fP são alterados.
+.PP
 .PP
 A grande vantagem é que os objetos tem nome acessível por código.
 .PP
 Enumerações Java é uma das construções mais poderosas.
 .PP
 Considere esse exemplo em Java:
+.CODE BR
+.so enum.java
+.CODE OFF
+.PP
+A saída desse programa, com o argumento 175 é:
+.QUOTE
+.CODE
+Your weight on MERCURY is 66,107583
+Your weight on VENUS is 158,374842
+Your weight on EARTH is 175,000000
+Your weight on MARS is 66,279007
+Your weight on JUPITER is 442,847567
+Your weight on SATURN is 186,552719
+Your weight on URANUS is 158,397260
+Your weight on NEPTUNE is 199,207413
+Your weight on PLUTO is 11,703031
+.QUOTE OFF
 .PP
 Infelizmente, não é possível traduzir isso de modo idiomático em C#
 .PP
@@ -27,11 +120,29 @@ A patente das enumerações do Java sugere que a implementação é um monte de 
 .PP
 Desse modo, o seguinte template:
 .PP
+Esse exemplo possui ainda mais margem para simplificação: no caso de
+uma enumeração que possui muito mais atributos, seria interessante
+gerar cada switch..case dentro de um laço for, ao invés de gerar cada
+um por vez, o que é na verdade mais um problema de código repetido.
+.CODE BR
+.so enum.cs.tt
+.CODE OFF
+.PP
 Gera o seguinte:
+.CODE BR
+.so enum.cs
+.CODE OFF
 .PP
-Com isso, podemos usar:
-.HIGHLIGHT csharp serialization.cs.tt
-.PP
-Outros usos são: gerar hierarquias de struct, gerar boilerplate e
-serialização.
-.PP
+Novamente, a seguinte saída:
+.QUOTE
+.CODE
+Weight on Mercury is 66,10758266016366
+Weight on Venus is 158,37484247218296
+Weight on Earth is 174,99999999999997
+Weight on Mars is 66,27900720649754
+Weight on Jupiter is 442,8475669617546
+Weight on Saturn is 186,55271929202414
+Weight on Uranus is 158,39725989314937
+Weight on Neptune is 199,20741268219012
+Weight on Pluto is 11,703030772485281
+.QUOTE OFF
