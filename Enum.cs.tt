@@ -1,10 +1,15 @@
-double weight = 54;
+.MCO
+.TAB 1
+
+
+
+
+double weight = 175;
 double mass = weight / Planet.Earth.SurfaceGravity();
 
 foreach (Planet p in Enum.GetValues(typeof(Planet)))
-{
-    Console.WriteLine($"Weight on {p} is {p.SurfaceWeight(mass)}");
-}
+    Console.WriteLine(
+        $"Weight on {p} is {p.SurfaceWeight(mass)}");
 
 <#
 Planet[] planets = {
@@ -26,6 +31,8 @@ enum Planet
 <#}#>
 }
 
+.MCR
+.TAB 2
 static class PlanetExtensions
 {
     // In kilograms.
@@ -54,7 +61,8 @@ static class PlanetExtensions
         return G * p.Mass() / (p.Radius() * p.Radius());
     }      
 
-    public static double SurfaceWeight(this Planet p, double otherMass)
+    public static double SurfaceWeight(
+            this Planet p, double otherMass)
     {
         return otherMass * p.SurfaceGravity();
     }
@@ -62,3 +70,5 @@ static class PlanetExtensions
 <#+
 record struct Planet(string Name, double Mass, double Radius);
 #>
+.MCX 0
+.TQ

@@ -1,7 +1,8 @@
-.TITLE "O preprocessador T4"
+.TITLE "Geração de código com T4"
 .SUBTITLE "Trabalho 2"
 .ATTRIBUTE_STRING ""
 .AUTHOR "Bento Borges Schirmer"
+.\".FOOTNOTE_MARKER_STYLE NUMBER
 .PRINTSTYLE TYPESET
 .PAPER A4
 .L_MARGIN 3c
@@ -24,59 +25,29 @@ modo muito parecido com PHP. Não se sabe se as similaridades entre T4,
 m4 e PHP são acidentais ou premeditadas.
 .PP
 O T4 é apresentado neste relatório gerando código para simular
-enumerações do Java em C#. Geração de código permite resolver de modo
-sucinto e eficiente uma gama de problemas que é impossível ou
-intratável de expressar idiomaticamente na maioria das linguagens de
-programação. No caso das enumerações do Java, elas viabilizam associar
-dados e comportamento à constantes de enumeração, o que permite
-modelar enormes porções de dados estáticos de domínio fixo.
+enumerações do Java em C#, especificamente o exemplo dos planetas do
+sistema solar, encontrado no guia às enumerações do Java\[tm] 5.0.\c
+.FOOTNOTE
+https://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html
+.FOOTNOTE OFF
+ O exemplo é reproduzido integralmente na
+.PDF_LINK java SUFFIX . "Listagem 1"
+Geração de código permite resolver de modo sucinto e eficiente uma
+gama de problemas que é impossível ou intratável de expressar
+idiomaticamente na maioria das linguagens de programação. No caso das
+enumerações do Java, elas viabilizam associar dados e comportamento à
+constantes de enumeração, permitindo modelar enormes porções de dados
+estáticos de domínio fixo.
+.FLOAT TARGET java
+.CODE
+.so enum.java
+.LABEL "Listagem 1." CAPTION "Os planetas do Java"
+.FLOAT OFF
 .PP
-Outro uso de geração de código é serialização de dados.
-É bastante óbvio que as APIs do .NET contemplam unicamente outros
-sistemas também construídos com .NET, o que faz parte de uma visão
-maior de ser um ecossistema, 
-mas na prática protocolos e formatos de arquivo
-seguem convenções únicas para \fIendianness\fP, codificação de
-\fIstring\fP e de objetos, limitando a serventia das APIs do .NET ou
-da Unity.
-
-que fogem do ecossistema C# e que atendem a uma rede aberta. Isso é
-verdade mesmo em sistemas proprietários, onde diferentes atores são
-implementados com linguagens e \fIframeworks\fP diversas.
-sistemas precisam se comunicar e
-trocar arquivos com sistemas feitos em linguagens e 
-diferentes, o que limita a utilidade do .NET. Para se salvar, é
-possível usar geração de código para automaticamente interpretar e
-montar pacotes de rede, ou ler e escrever automaticamente arquivos,
-
-privilegiam
-comunicação entre sistemas autorados em .NET, seguindo várias
-convenções únicas. Porém, na prática, protocolos e formatos de
-arquivos são padronizados para comunicação aberta, ou pelo menos
-concordam em formatos acessíveis para realizar isso.
-Diante disso, ainda que o C# e o .NET realizem um trabalho enorme, com
-serialização automática, estes nunca 
-Ainda que o
-\&.NET forneça várias APIs para comunicação entre sistemas .NET, na
-prática sistemas precisams e comunicar com , respeitando detalhes como
-\fIendianness\fP, codificação de \fIstrings\fP e objetos.
-, especialmente
-em protocolos e formatos de arquivos.
-em sistemas
-heterogêneos. Gerando código, é possível facilmente atribuir um
-identificador à objetos estáticos
-
-Ainda, é possível simplificar muito \fIboilerplate\fP, pois a partir
-de uma única lista, é possível 
-gerar atributos em um tipo e métodos para iniciá-los e desativá-los em
-massa, ou declarar métodos em massa.
-
-Finalmente, um uso mais curioso é simular hierarquia entre
-\*[CODE]struct\*[CODE X], pois ao usar 
-o que é necessário em código compilado com
-Burst da Unity, que limite o C# a \fIsubset\fP conhecido como HPC#,
-que entre outras limitações, proíbe o uso de tipos de referência,
-basicamente todas as classes.
+Outros usos de geração de código é automaticamente gerar métodos de
+leitura e escrita de dados em disco, gerar automaticamente métodos de
+montagem de pacotes de rede, simplificação de \fIboilerplate\fP e
+simular hierarquias não convencionais de objetos.
 .PP
 Os problemas discutidos podem sim ser resolvidos usando reflexão ou
 anotações de compilador, porém a ineficiência da reflexão é notória, e
@@ -84,35 +55,36 @@ seu uso ofusca o comportamento do programa com efeitos colaterais não
 óbvios.  Em contrapartida, código gerado é muito legível e interage
 adequadamente com IntelliSense, permitindo inspeção e depuração fácil.
 .PP
+No caso particular das enumerações do Java, antes de serem
+.PDF_LINK typesafe "Listagem 2"
+introduzidas em 2004 de modo sintático, Joshua Bloch recomendou em seu
+livro Java Efeito, 1 ed. (2001) que os programadores usassem o chamado
+typesafe enums, um \fIdesign pattern\fP. O mesmo pode ser 2001. Um
+nome engraçado que causa confusão.
+.FLOAT TARGET typesafe
+.TAB_SET 1  0  8c L
+.TAB_SET 2 8c+18p 7c-18p L
+.CODE_SIZE 45
+.LS -9
+.CODE
+.so EnumTypesafe.cs
+.LS +9
+.CODE_SIZE 100
+.LABEL "Listagem 2." CAPTION "Planetas do Java implementado em C# \
+com \fItypesafe enum\fP"
+.FLOAT OFF
+.PP
 Neste relatório, T4 é invocado pela linha de comando para transformar
 um \fItemplate\fP em um código auto-contido, que é então executado
 diretamente, porém em um projeto maior, T4 faz parte do sistema de
 \fIbuild\fP e gera código de modo transparente, conforme
 \fItemplates\fP são alterados.
 .PP
-.PP
 A grande vantagem é que os objetos tem nome acessível por código.
 .PP
 Enumerações Java é uma das construções mais poderosas.
 .PP
-Considere esse exemplo em Java:
-.CODE BR
-.so enum.java
-.CODE OFF
-.PP
 A saída desse programa, com o argumento 175 é:
-.QUOTE
-.CODE
-Your weight on MERCURY is 66,107583
-Your weight on VENUS is 158,374842
-Your weight on EARTH is 175,000000
-Your weight on MARS is 66,279007
-Your weight on JUPITER is 442,847567
-Your weight on SATURN is 186,552719
-Your weight on URANUS is 158,397260
-Your weight on NEPTUNE is 199,207413
-Your weight on PLUTO is 11,703031
-.QUOTE OFF
 .PP
 Infelizmente, não é possível traduzir isso de modo idiomático em C#
 .PP
@@ -124,25 +96,27 @@ Esse exemplo possui ainda mais margem para simplificação: no caso de
 uma enumeração que possui muito mais atributos, seria interessante
 gerar cada switch..case dentro de um laço for, ao invés de gerar cada
 um por vez, o que é na verdade mais um problema de código repetido.
-.CODE BR
-.so enum.cs.tt
-.CODE OFF
+.FLOAT TARGET t4
+.TAB_SET 1 0 7c-9p L
+.TAB_SET 2 7c+18p 9c-9p L
+.CODE_SIZE 50
+.LS -8
+.CODE
+.so Enum.cs.tt
+.LS +8
+.CODE_SIZE 100
+.LABEL "Listagem 3." CAPTION "Código T4 gamer"
+.FLOAT OFF
 .PP
 Gera o seguinte:
-.CODE BR
-.so enum.cs
-.CODE OFF
+.FLOAT TARGET cs
+.CODE_SIZE 50
+.LS -8
+.CODE
+.so Enum.cs-annotated
+.LS +8
+.CODE_SIZE 100
+.LABEL "Listagem 4." CAPTION "Código final em C#"
+.FLOAT OFF
 .PP
 Novamente, a seguinte saída:
-.QUOTE
-.CODE
-Weight on Mercury is 66,10758266016366
-Weight on Venus is 158,37484247218296
-Weight on Earth is 174,99999999999997
-Weight on Mars is 66,27900720649754
-Weight on Jupiter is 442,8475669617546
-Weight on Saturn is 186,55271929202414
-Weight on Uranus is 158,39725989314937
-Weight on Neptune is 199,20741268219012
-Weight on Pluto is 11,703030772485281
-.QUOTE OFF
