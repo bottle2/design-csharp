@@ -12,6 +12,7 @@
 .PT_SIZE 12
 .JUSTIFY
 .START
+.HEADING 1 Introdução
 .PP
 A tecnologia apresentada neste relatório é o Text Template
 Tranformation Toolkit, abreviada T4, e é usada para geração de texto
@@ -28,6 +29,7 @@ O T4 é apresentado neste relatório gerando código para simular
 enumerações do Java em C#, especificamente o exemplo dos planetas do
 sistema solar, encontrado no guia às enumerações do Java\[tm] 5.0.\c
 .FOOTNOTE
+.PDF_WWW_LINK \
 https://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html
 .FOOTNOTE OFF
  O exemplo é reproduzido integralmente na
@@ -39,28 +41,37 @@ enumerações do Java, elas viabilizam associar dados e comportamento à
 constantes de enumeração, permitindo modelar enormes porções de dados
 estáticos de domínio fixo.
 .FLOAT TARGET java
+.LS -5
 .CODE
 .so enum.java
+.LS +5
 .LABEL "Listagem 1." CAPTION "Os planetas do Java"
 .FLOAT OFF
 .PP
-Outros usos de geração de código é automaticamente gerar métodos de
-leitura e escrita de dados em disco, gerar automaticamente métodos de
-montagem de pacotes de rede, simplificação de \fIboilerplate\fP e
-simular hierarquias não convencionais de objetos.
+Outros usos de geração de código é gerar métodos de leitura e escrita
+de dados em disco, gerar métodos de montagem de pacotes de rede, gerar
+\fIoverload\fP de métodos para tipos sem parentesco, gerar métodos
+comuns de \fIinterfaces\fP, gerar variações de métodos, simplificar
+\fIboilerplate\fP, e simular hierarquias não convencionais de objetos.
+.HEADING 1 "Antes das enumerações do Java"
 .PP
-Os problemas discutidos podem sim ser resolvidos usando reflexão ou
-anotações de compilador, porém a ineficiência da reflexão é notória, e
-seu uso ofusca o comportamento do programa com efeitos colaterais não
-óbvios.  Em contrapartida, código gerado é muito legível e interage
-adequadamente com IntelliSense, permitindo inspeção e depuração fácil.
-.PP
-No caso particular das enumerações do Java, antes de serem
+Antes da linguagem Java\[tm] introduzir suas enumerações em 2004, na
+sua versão 5.0, Joshua Bloch recomendou, na primeira edição do seu
+livro Java Efeito (2001), que os programadores usassem o chamado
+\fItypesafe enums\fP, um \fIdesign pattern\fP. Apesar de
+revolucionário na época, seu nome hoje causa confusão, pois a maioria
+das linguagens de programação possui enumerações com tipagem forte,
+inclusive C#, de modo que a técnica é rejeitada como redundante,
+apesar do seu poder singular. A
 .PDF_LINK typesafe "Listagem 2"
-introduzidas em 2004 de modo sintático, Joshua Bloch recomendou em seu
-livro Java Efeito, 1 ed. (2001) que os programadores usassem o chamado
-typesafe enums, um \fIdesign pattern\fP. O mesmo pode ser 2001. Um
-nome engraçado que causa confusão.
+mostra a aplicação do \fItypesafe enum\fP para modelar os planetas do
+Java na linguagem C#. Evidentemente, se trata de um código verboso,
+porém alcança vários objetivos principais, como associar dados e
+métodos às etiquetas, representar conjuntos e permitir operações
+neles, e ser iterável. Por outro lado, as etiquetas não são
+constantes, impedindo que se use um \*[CODE]switch..case\*[CODE X] ou
+expressão \*[CODE]switch\*[CODE X], e em demais situações que esperam
+uma expressão constante.
 .FLOAT TARGET typesafe
 .TAB_SET 1  0  8c L
 .TAB_SET 2 8c+18p 7c-18p L
@@ -73,12 +84,42 @@ nome engraçado que causa confusão.
 .LABEL "Listagem 2." CAPTION "Planetas do Java implementado em C# \
 com \fItypesafe enum\fP"
 .FLOAT OFF
+.HEADING 1 "Gerando código"
 .PP
-Neste relatório, T4 é invocado pela linha de comando para transformar
-um \fItemplate\fP em um código auto-contido, que é então executado
-diretamente, porém em um projeto maior, T4 faz parte do sistema de
-\fIbuild\fP e gera código de modo transparente, conforme
-\fItemplates\fP são alterados.
+Uma leitura da patente
+.FOOTNOTE
+.PDF_WWW_LINK https://patents.google.com/patent/US7263687B2/en
+.FOOTNOTE OFF
+que Joshua Bloch e Neal Gafter declararam em 9 de setembro de 2002, em
+benefício da Sun Microsystems, e que atualmente se encontra expirada,
+indica que a implementação das enumerações do Java se resume ao
+compilador gerar vários \*[CODE]switch..case\*[CODE X], e fora isso,
+as constantes de enumeração são idênticas à objetos comuns no nível de
+\fIbytecode\fP. Para abordar o problema usando T4, é feito exatamente
+isso, e o resultado se encontra na
+.PDF_LINK t4 SUFFIX . "Listagem 3"
+.FLOAT TARGET t4
+.TAB_SET 1 0 7c-9p L
+.TAB_SET 2 7c+18p 9c-9p L
+.CODE_SIZE 50
+.LS -8
+.CODE
+.so Enum.cs.tt
+.LS +8
+.CODE_SIZE 100
+.LABEL "Listagem 3." CAPTION "Código T4 gamer"
+.FLOAT OFF
+.PP
+Primeiramente, conforme pode se ver no final da
+.PDF_LINK t4 SUFFIX , "Listagem 3"
+é declarado um tipo \*[CODE]record struct Planet\*[CODE X],
+que mantém o nome de uma constante e seus dados correspondentes. Esse
+tipo é declarado dentro de um bloco de controle\*[CODE]<#+ .. #>\*[CODE X].
+Blocos de controle assim permitem adicionar tipos, métodos e
+propriedades úteis para o restante do \fItemplate\fP. Esse bloco deve
+aparecer exclusivamente no final do arquivo.
+.PP
+Em seguida, 
 .PP
 A grande vantagem é que os objetos tem nome acessível por código.
 .PP
@@ -96,17 +137,7 @@ Esse exemplo possui ainda mais margem para simplificação: no caso de
 uma enumeração que possui muito mais atributos, seria interessante
 gerar cada switch..case dentro de um laço for, ao invés de gerar cada
 um por vez, o que é na verdade mais um problema de código repetido.
-.FLOAT TARGET t4
-.TAB_SET 1 0 7c-9p L
-.TAB_SET 2 7c+18p 9c-9p L
-.CODE_SIZE 50
-.LS -8
-.CODE
-.so Enum.cs.tt
-.LS +8
-.CODE_SIZE 100
-.LABEL "Listagem 3." CAPTION "Código T4 gamer"
-.FLOAT OFF
+.HEADING 1 "Implementação final"
 .PP
 Gera o seguinte:
 .FLOAT TARGET cs
@@ -119,4 +150,19 @@ Gera o seguinte:
 .LABEL "Listagem 4." CAPTION "Código final em C#"
 .FLOAT OFF
 .PP
-Novamente, a seguinte saída:
+Ao analisar a
+.PDF_LINK cs SUFFIX , "Listagem 4"
+surge a dúvida: não seria mais fácil escrever a enumeração e as
+expressões
+\*[CODE]switch\*[CODE X] diretamente? Pois, essa conclusão é que é
+sempre encontrada \fIonline\fP quando se estuda esse problema, e o
+principal ganho é o seguinte.
+Tanto a enumeração do Java, quanto a versão \fItypesafe enum\fP,
+quanto a versão usando T4, possuem uma vantagem única e suprema:
+manutenção. Plutão consta como um planeta, mas no ano X ele perdeu
+esse rank. Se um programador deseja remove-lo, ele só precisa apagar
+uma linha. O programador pode reordernar as constantes também
+livremente. Finalmente, um programador deve seguir o construtor
+estritamente.
+.HEADING 1 Conclusão
+.PP
