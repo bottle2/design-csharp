@@ -61,17 +61,17 @@ livro Java Efeito (2001), que os programadores usassem o chamado
 \fItypesafe enums\fP, um \fIdesign pattern\fP. Apesar de
 revolucionário na época, seu nome hoje causa confusão, pois a maioria
 das linguagens de programação possui enumerações com tipagem forte,
-inclusive C#, de modo que a técnica é rejeitada como redundante,
-apesar do seu poder singular. A
+inclusive C#, ao passo que o \fIdesign pattern\fP se preocupa com a
+associação de dados e comportamentos, além da tipagem. A
 .PDF_LINK typesafe "Listagem 2"
 mostra a aplicação do \fItypesafe enum\fP para modelar os planetas do
 Java na linguagem C#. Evidentemente, se trata de um código verboso,
-porém alcança vários objetivos principais, como associar dados e
-métodos às etiquetas, representar conjuntos e permitir operações
-neles, e ser iterável. Por outro lado, as etiquetas não são
-constantes, impedindo que se use um \*[CODE]switch..case\*[CODE X] ou
-expressão \*[CODE]switch\*[CODE X], e em demais situações que esperam
-uma expressão constante.
+porém alcança vários objetivos, como associar dados e métodos às
+etiquetas, representar conjuntos, permitir operações \fIbitwise\fP e
+aritméticas neles, e ser iterável. Por outro lado, as etiquetas não
+são constantes, impedindo que se use um \*[CODE]switch..case\*[CODE X]
+ou expressão \*[CODE]switch\*[CODE X], e em demais situações que
+esperam uma expressão constante.
 .FLOAT TARGET typesafe
 .TAB_SET 1  0  8c L
 .TAB_SET 2 8c+18p 7c-18p L
@@ -95,8 +95,9 @@ benefício da Sun Microsystems, e que atualmente se encontra expirada,
 indica que a implementação das enumerações do Java se resume ao
 compilador gerar vários \*[CODE]switch..case\*[CODE X], e fora isso,
 as constantes de enumeração são idênticas à objetos comuns no nível de
-\fIbytecode\fP. Para abordar o problema usando T4, é feito exatamente
-isso, e o resultado se encontra na
+\fIbytecode\fP, com algumas micro-otimizações usando \fIflags\fP por
+baixo dos panos. Para aproximar o problema usando T4, é feito
+exatamente isso, e o resultado se encontra na
 .PDF_LINK t4 SUFFIX . "Listagem 3"
 .FLOAT TARGET t4
 .TAB_SET 1 0 7c-9p L
@@ -110,16 +111,41 @@ isso, e o resultado se encontra na
 .LABEL "Listagem 3." CAPTION "Código T4 gamer"
 .FLOAT OFF
 .PP
+A Listagem 3 começa com alguns \fItop-level statements\fP, porém esse
+código não é executado, pois como se trata de um \fItemplate\fP, essas
+e outras linhas são copiadas tais como estão para o arquivo
+final. Em seguida, ainda na Listagem 3, há um vetor planets declarado
+dentro de um bloco de controle <#..#>, e essa declaração é, de fato,
+executada pelo T4 e passa a estar disponível em outros blocos de
+controle, e será usada para gerar a enumeração e expressões switch. O
+vetor planets tem tipo Planet, que por sua vez é um struct record
+declarado num bloco de controle <#+..#>, que só pode ocorrer no final
+de um \fItemplate\fP, como se pode observar nas três últimas linhas da
+Listagem 3. Nesse bloco
+de controle
+<#+..#>, chamado bloco de controle de \fIclass featutes\fP, além de
+permitir declarar tipos, também podem ser declarados métodos e
+propriedades.
+.PP
+Embaixo da declaração do vetor planets, ainda na Listagem 3, ocorre
+algo interessante: uma enumeração Planet é declarada, e após o seu
+abre chaves, é introduzido um bloco de controle contendo um único
+foreach..ref
+.PP
+Escrever um \fItemplate\fP T4 é escrever o arquivo final, e interpolar
+geração de texto conforme necessário. Donde, 
+.PDF_LINK t4 SUFFIX , "Listagem 3"
+.PP
 Primeiramente, conforme pode se ver no final da
 .PDF_LINK t4 SUFFIX , "Listagem 3"
-é declarado um tipo \*[CODE]record struct Planet\*[CODE X],
-que mantém o nome de uma constante e seus dados correspondentes. Esse
-tipo é declarado dentro de um bloco de controle\*[CODE]<#+ .. #>\*[CODE X].
+é declarado um tipo \*[CODE]record struct Planet\*[CODE X], que mantém
+o nome de uma constante e seus dados correspondentes. Esse tipo é
+declarado dentro de um bloco de controle\*[CODE]<#+..#>\*[CODE X].
 Blocos de controle assim permitem adicionar tipos, métodos e
-propriedades úteis para o restante do \fItemplate\fP. Esse bloco deve
-aparecer exclusivamente no final do arquivo.
+propriedades úteis para o restante do \fItemplate\fP, e deve aparecer
+exclusivamente no final do arquivo.
 .PP
-Em seguida, 
+
 .PP
 A grande vantagem é que os objetos tem nome acessível por código.
 .PP

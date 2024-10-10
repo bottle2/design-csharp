@@ -1,0 +1,11 @@
+#!/bin/bash
+
+where=~/storage/pictures
+
+if [ $# = 1 ]; then
+    ragel -pV $1 | dot -Tsvg > $where/${1%.*}.svg
+elif [ $# = 2 ]; then
+    ragel -pVM $2 $1 | dot -Tsvg > $where/${2%.*}.svg
+else
+    echo 'you dumbass'
+fi
