@@ -1,6 +1,7 @@
 #!/bin/bash
 
-where=~/storage/pictures
+#where=~/storage/pictures
+where=.
 
 if [ $# = 1 ]; then
     ragel -pV $1 | dot -Tsvg > $where/${1%.*}.svg

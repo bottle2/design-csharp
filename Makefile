@@ -9,3 +9,10 @@ Enum.cs:Enum.cs.tt
 	#t4 $< -o=$@
 	clip.exe < $@
 	cat $@
+
+CFLAGS=-std=c18 -Wpedantic -Wall -Wextra -g3 -fsanitize=address,undefined
+
+mdmom:mdmom.c
+
+mdmom.c:mdmom.rg
+	ragel -G2 $<

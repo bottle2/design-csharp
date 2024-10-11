@@ -76,6 +76,9 @@ uma facilidade que exige pouco código.
 No rastreamento de pilha, \*[CODE]ctor\*[CODE X] simboliza construtores de
 instância, e \*[CODE]cctor\*[CODE X] simboliza construtores estáticos.
 .HEADING 2 "Tratamento de exceções"
+.PP
+Nunca lance exceções dentro de ToString()!!!!!!!!
+.PP
 O tratamento de exceções é bastante comum, iniciado com o \fIstatement\fP
 \*[CODE]throw\*[CODE X] e capturado com a cláusula \*[CODE]try { ... } catch {
 ... } finally { ... }\*[CODE X].
