@@ -98,6 +98,7 @@ as constantes de enumeração são idênticas à objetos comuns no nível de
 \fIbytecode\fP, com algumas micro-otimizações usando \fIflags\fP por
 baixo dos panos. Para aproximar o problema usando T4, é feito
 exatamente isso, e o resultado se encontra na
+.\" XXX mencionar C#
 .PDF_LINK t4 SUFFIX . "Listagem 3"
 .FLOAT TARGET t4
 .TAB_SET 1 0 7c-9p L
@@ -117,20 +118,23 @@ e outras linhas são copiadas tais como estão para o arquivo
 final. Em seguida, ainda na Listagem 3, há um vetor planets declarado
 dentro de um bloco de controle <#..#>, e essa declaração é, de fato,
 executada pelo T4 e passa a estar disponível em outros blocos de
-controle, e será usada para gerar a enumeração e expressões switch. O
-vetor planets tem tipo Planet, que por sua vez é um struct record
+controle, mas não é copiada para a saída.
+.PP
+e será usada para gerar a enumeração e expressões switch.
+.PP
+O vetor planets tem tipo Planet, que por sua vez é um struct record
 declarado num bloco de controle <#+..#>, que só pode ocorrer no final
 de um \fItemplate\fP, como se pode observar nas três últimas linhas da
-Listagem 3. Nesse bloco
-de controle
+Listagem 3. No bloco
 <#+..#>, chamado bloco de controle de \fIclass featutes\fP, além de
 permitir declarar tipos, também podem ser declarados métodos e
 propriedades.
 .PP
 Embaixo da declaração do vetor planets, ainda na Listagem 3, ocorre
-algo interessante: uma enumeração Planet é declarada, e após o seu
-abre chaves, é introduzido um bloco de controle contendo um único
-foreach..ref
+algo interessante: uma enumeração Planet é declarada, e no lugar de
+constantes de enumeração,
+é introduzido um bloco de controle contendo um
+foreach..ref que itera sobre o vetor planets declarado antes
 .PP
 Escrever um \fItemplate\fP T4 é escrever o arquivo final, e interpolar
 geração de texto conforme necessário. Donde, 
