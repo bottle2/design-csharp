@@ -1,5 +1,3 @@
-.MCO
-.TAB 1
 
 
 
@@ -11,45 +9,49 @@ foreach (Planet p in Enum.GetValues(typeof(Planet)))
     Console.WriteLine(
         $"Weight on {p} is {p.SurfaceWeight(mass)}");
 
-<#
-Planet[] planets = {
-    new("Mercury", 3.303e+23, 2.4397e6 ),
-    new("Venus"  , 4.869e+24, 6.0518e6 ),
-    new("Earth"  , 5.976e+24, 6.37814e6),
-    new("Mars"   , 6.421e+23, 3.3972e6 ),
-    new("Jupiter", 1.9e+27,   7.1492e7 ),
-    new("Saturn" , 5.688e+26, 6.0268e7 ),
-    new("Uranus" , 8.686e+25, 2.5559e7 ),
-    new("Neptune", 1.024e+26, 2.4746e7 ),
-    new("Pluto"  , 1.27e+22,  1.137e6  )
-};
-#>
 enum Planet
 {
-<# foreach (ref readonly Planet p in planets.AsSpan()) {
-    Write($"    {p.Name},\n");
-}#>
+    Mercury,
+    Venus,
+    Earth,
+    Mars,
+    Jupiter,
+    Saturn,
+    Uranus,
+    Neptune,
+    Pluto,
+    PlanetX
 }
 
-.MCR
-.TAB 2
 static class PlanetExtensions
 {
     // In kilograms.
     public static double Mass(this Planet p) => p switch
     {
-<# foreach (ref readonly Planet p in planets.AsSpan()) {#>
-        Planet.<#= p.Name #> => <#= p.Mass #>,
-<#}#>
+        Planet.Mercury => 3.303E+23,
+        Planet.Venus => 4.869E+24,
+        Planet.Earth => 5.976E+24,
+        Planet.Mars => 6.421E+23,
+        Planet.Jupiter => 1.9E+27,
+        Planet.Saturn => 5.688E+26,
+        Planet.Uranus => 8.686E+25,
+        Planet.Neptune => 1.024E+26,
+        Planet.Pluto => 1.27E+22,
         _ => throw new ArgumentOutOfRangeException(nameof(p)),
     };
 
     // In meters.
     public static double Radius(this Planet p) => p switch
     {
-<# foreach (ref readonly Planet p in planets.AsSpan()) {#>
-        Planet.<#= p.Name #> => <#= p.Radius #>,
-<#}#>
+        Planet.Mercury => 2439700,
+        Planet.Venus => 6051800,
+        Planet.Earth => 6378140,
+        Planet.Mars => 3397200,
+        Planet.Jupiter => 71492000,
+        Planet.Saturn => 60268000,
+        Planet.Uranus => 25559000,
+        Planet.Neptune => 24746000,
+        Planet.Pluto => 1137000,
         _ => throw new ArgumentOutOfRangeException(nameof(p)),
     };
 
@@ -67,8 +69,3 @@ static class PlanetExtensions
         return otherMass * p.SurfaceGravity();
     }
 }
-<#+
-record struct Planet(string Name, double Mass, double Radius);
-#>
-.MCX 0
-.TQ

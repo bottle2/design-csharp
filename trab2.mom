@@ -1,8 +1,3 @@
-.TITLE "Geração de código com T4"
-.SUBTITLE "Trabalho 2"
-.ATTRIBUTE_STRING ""
-.AUTHOR "Bento Borges Schirmer"
-.\".FOOTNOTE_MARKER_STYLE NUMBER
 .PRINTSTYLE TYPESET
 .PAPER A4
 .L_MARGIN 3c
@@ -11,10 +6,19 @@
 .B_MARGIN 2c
 .PT_SIZE 12
 .JUSTIFY
+.TITLE "Geração de código C# com T4"
+.SUBTITLE "Trabalho 2 apresentado à disciplina Implementação de Linguagens" \
+"de Programação, ministrada pelo professor Eduardo Kessler Piveta" \
+          "ELC1088/2024"
+.ATTRIBUTE_STRING ""
+.AUTHOR "Bento Borges Schirmer"
+.HEADER_LEFT "\E*[$TITLE]"
+.HEADER_RIGHT "\*[PAGE#]"
+.PAGINATE OFF
 .START
 .HEADING 1 Introdução
 .PP
-A tecnologia apresentada neste relatório é o Text Template
+A tecnologia estudada neste relatório é o Text Template
 Tranformation Toolkit, abreviada T4, e é usada para geração de texto
 em tempo de compilação ou tempo de execução. A ferramenta foi criada
 em 2005 pela Microsoft para o Visual Studio. O nome T4 se assemelha
@@ -27,7 +31,7 @@ m4 e PHP são acidentais ou premeditadas.
 .PP
 O T4 é apresentado neste relatório gerando código para simular
 enumerações do Java em C#, especificamente o exemplo dos planetas do
-sistema solar, encontrado no guia às enumerações do Java\[tm] 5.0.\c
+sistema solar, encontrado no guia às enumerações do Java 5.0.\c
 .FOOTNOTE
 .PDF_WWW_LINK \
 https://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html
@@ -37,32 +41,25 @@ https://docs.oracle.com/javase/1.5.0/docs/guide/language/enums.html
 Geração de código permite resolver de modo sucinto e eficiente uma
 gama de problemas que é impossível ou intratável de expressar
 idiomaticamente na maioria das linguagens de programação. No caso das
-enumerações do Java, elas viabilizam associar dados e comportamento à
+enumerações do Java, elas viabilizam associar dados e comportamento a
 constantes de enumeração, permitindo modelar enormes porções de dados
 estáticos de domínio fixo.
-.FLOAT TARGET java
-.LS -5
-.CODE
-.so enum.java
-.LS +5
-.LABEL "Listagem 1." CAPTION "Os planetas do Java"
-.FLOAT OFF
 .PP
 Outros usos de geração de código é gerar métodos de leitura e escrita
 de dados em disco, gerar métodos de montagem de pacotes de rede, gerar
 \fIoverload\fP de métodos para tipos sem parentesco, gerar métodos
-comuns de \fIinterfaces\fP, gerar variações de métodos, simplificar
+comuns de interfaces, gerar variações de métodos, simplificar
 \fIboilerplate\fP, e simular hierarquias não convencionais de objetos.
 .HEADING 1 "Antes das enumerações do Java"
 .PP
-Antes da linguagem Java\[tm] introduzir suas enumerações em 2004, na
-sua versão 5.0, Joshua Bloch recomendou, na primeira edição do seu
-livro Java Efeito (2001), que os programadores usassem o chamado
-\fItypesafe enums\fP, um \fIdesign pattern\fP. Apesar de
-revolucionário na época, seu nome hoje causa confusão, pois a maioria
-das linguagens de programação possui enumerações com tipagem forte,
-inclusive C#, ao passo que o \fIdesign pattern\fP se preocupa com a
-associação de dados e comportamentos, além da tipagem. A
+Antes da linguagem Java introduzir sua sintaxe de enumerações em 2004,
+Joshua Bloch recomendou, na primeira edição do seu livro Java Efetivo
+(2001), que os programadores usassem o chamado \fItypesafe enums\fP,
+um \fIdesign pattern\fP. Apesar de revolucionário na época, seu nome
+hoje causa confusão, pois a maioria das linguagens de programação
+possui enumerações com tipagem forte, inclusive C#, ao passo que o
+\fIdesign pattern\fP se preocupa com a associação de dados e
+comportamentos, além da tipagem. A
 .PDF_LINK typesafe "Listagem 2"
 mostra a aplicação do \fItypesafe enum\fP para modelar os planetas do
 Java na linguagem C#. Evidentemente, se trata de um código verboso,
@@ -72,6 +69,42 @@ aritméticas neles, e ser iterável. Por outro lado, as etiquetas não
 são constantes, impedindo que se use um \*[CODE]switch..case\*[CODE X]
 ou expressão \*[CODE]switch\*[CODE X], e em demais situações que
 esperam uma expressão constante.
+.FLOAT TARGET java
+.LS -5
+.CODE
+.so enum.java
+.LS +5
+.LABEL "Listagem 1." CAPTION "Os planetas do Java"
+.FLOAT OFF
+.HEADING 1 "Gerando código"
+.PP
+Uma leitura da patente\c
+.FOOTNOTE
+.PDF_WWW_LINK https://patents.google.com/patent/US7263687B2/en
+.FOOTNOTE OFF
+ que Joshua Bloch e Neal Gafter declararam em 9 de setembro de 2002, em
+benefício da Sun Microsystems, e que atualmente se encontra expirada,
+indica que a implementação das enumerações do Java se resume ao
+compilador gerar vários \*[CODE]switch..case\*[CODE X], e fora isso,
+as constantes de enumeração são idênticas à objetos comuns no nível de
+\fIbytecode\fP, com algumas micro-otimizações usando \fIflags\fP por
+baixo dos panos.
+Exatamente isso pode ser feito usando T4, como uma forma alternativa
+de aproximar o problema de enumerações do Java no C#, e o
+resultado se encontra na
+.PDF_LINK t4 SUFFIX . "Listagem 3"
+.PP
+A
+.PDF_LINK t4 "Listagem 3"
+começa com alguns \fItop-level statements\fP, porém esse código não é
+executado, pois como se trata de um \fItemplate\fP, essas e outras
+linhas são copiadas tais como são para a saída: o código final. Em
+seguida, ainda na
+.PDF_LINK t4 SUFFIX , "Listagem 3"
+há um vetor \*[CODE]planets\*[CODE X] declarado dentro de um bloco de
+controle \*[CODE]<#..#>\*[CODE X], e essa declaração é, de fato,
+executada pelo T4, e passa a estar disponível em outros blocos de
+controle, mas não é copiada para a saída.
 .FLOAT TARGET typesafe
 .TAB_SET 1  0  8c L
 .TAB_SET 2 8c+18p 7c-18p L
@@ -84,22 +117,47 @@ esperam uma expressão constante.
 .LABEL "Listagem 2." CAPTION "Planetas do Java implementado em C# \
 com \fItypesafe enum\fP"
 .FLOAT OFF
-.HEADING 1 "Gerando código"
 .PP
-Uma leitura da patente
-.FOOTNOTE
-.PDF_WWW_LINK https://patents.google.com/patent/US7263687B2/en
-.FOOTNOTE OFF
-que Joshua Bloch e Neal Gafter declararam em 9 de setembro de 2002, em
-benefício da Sun Microsystems, e que atualmente se encontra expirada,
-indica que a implementação das enumerações do Java se resume ao
-compilador gerar vários \*[CODE]switch..case\*[CODE X], e fora isso,
-as constantes de enumeração são idênticas à objetos comuns no nível de
-\fIbytecode\fP, com algumas micro-otimizações usando \fIflags\fP por
-baixo dos panos. Para aproximar o problema usando T4, é feito
-exatamente isso, e o resultado se encontra na
-.\" XXX mencionar C#
+O vetor \*[CODE]planets\*[CODE X] tem tipo \*[CODE]Planet\*[CODE X],
+que por sua vez é um \*[CODE]struct record\*[CODE X] decla\%ra\%do num
+bloco de controle \*[CODE]<#+..#>\*[CODE X], que só pode ocorrer no
+final de um \fItemplate\fP, como se pode observar nas três últimas
+linhas da
 .PDF_LINK t4 SUFFIX . "Listagem 3"
+O bloco \*[CODE]<#+..#>\*[CODE X], chamado bloco de controle de
+\fIclass features\fP, além de permitir declarar tipos, também podem
+ser declarados métodos e propriedades. Como os outros blocos de
+controle, essas linhas não são copiadas para a saída.
+.PP
+Embaixo da declaração do vetor \*[CODE]planets\*[CODE X], ainda na
+.PDF_LINK t4 SUFFIX , "Listagem 3"
+uma enumeração \*[CODE]Planet\*[CODE X] é declarada.
+Como é uma linha ordinária fora de qualquer bloco de controle, o T4,
+novamente, apenas copia a linha para a saída, sem a interpretar. Logo,
+não existe conflito entre essa enumeração e o \*[CODE]struct
+record\*[CODE X] de mesmo nome.
+Para gerar as constantes dessa
+enumeração, introduz-se um bloco de controle contendo um
+\*[CODE]foreach ref..\*[CODE X], que itera sobre o vetor
+\*[CODE]planets\*[CODE X], escrevendo na saída o nome de cada planeta,
+separados por vírgula, com o método utilitário \*[CODE]Write\*[CODE X]\&.
+.PP
+O restante da
+.PDF_LINK t4 "Listagem 3"
+são métodos de extensão que, finalmente, associam dados e
+comportamento à enumeração de planetas.
+O último comentário a se fazer sobre T4, é da capacidade do código em
+C# de se estender por vários blocos de controle, assim como o PHP, com
+texto ordinário no meio sendo copiado zero ou mais vezes para a saída,
+dependendo de estar aninhado num condicional ou laço de repetição.
+Isso é observado nas expressões \*[CODE]switch\*[CODE X] que avaliam a
+massa e o raio de cada planeta, onde entre os dois blocos de controle
+\*[CODE]<#..#>\*[CODE X] que começam e terminam o \*[CODE]foreach
+ref..\*[CODE X], há os braços da expressão \*[CODE]switch\*[CODE X]
+copiados várias vezes para a saída,
+variando conforme blocos de controle de expressão
+\*[CODE]<#=..#>\*[CODE X] avaliam as propriedades da variável iterada
+\*[CODE]p\*[CODE X]\&.
 .FLOAT TARGET t4
 .TAB_SET 1 0 7c-9p L
 .TAB_SET 2 7c+18p 9c-9p L
@@ -109,67 +167,58 @@ exatamente isso, e o resultado se encontra na
 .so Enum.cs.tt
 .LS +8
 .CODE_SIZE 100
-.LABEL "Listagem 3." CAPTION "Código T4 gamer"
+.LABEL "Listagem 3." CAPTION "\fITemplate\fP para gerar os planetas do Java em C# através do T4"
 .FLOAT OFF
+.HEADING 1 "Implementação final e discussão"
 .PP
-A Listagem 3 começa com alguns \fItop-level statements\fP, porém esse
-código não é executado, pois como se trata de um \fItemplate\fP, essas
-e outras linhas são copiadas tais como estão para o arquivo
-final. Em seguida, ainda na Listagem 3, há um vetor planets declarado
-dentro de um bloco de controle <#..#>, e essa declaração é, de fato,
-executada pelo T4 e passa a estar disponível em outros blocos de
-controle, mas não é copiada para a saída.
+O resultado da execução do T4 para o exemplo analisado se encontra na
+.PDF_LINK cs SUFFIX , "Listagem 4"
+e o código gerado levanta a seguinte dúvida: não seria mais fácil
+escrever a enumeração e as expressões \*[CODE]switch\*[CODE X]
+diretamente, sem empregar o T4 ou o \fIdesign pattern\fP \fItypesafe
+enum\fP?
+Ainda, não se trata de um código corriqueiro, comum em qualquer
+projeto de software?
+Pois, por trás do código óbvio se esconde um
+\fIanti-pattern\fP: a cirurgia de espingarda, que ocorre quando uma
+alteração precisa ser replicada e refletida em múltiplos locais de um
+projeto, o que é um custo de manutenção alto e propenso a erros.
+Combater esse \fIanti-pattern\fP, com o objetivo de aumentar a
+robusteza das aplicações e tornar sua manutenção viável, é o que
+motiva buscar \fIdesign patterns\fP avançados e, eventualmente,
+recorrer a metaprogramação, inclusive geração de código.
 .PP
-e será usada para gerar a enumeração e expressões switch.
+Considere Plutão, que foi rebaixado a planeta anão, portanto não faz
+mais parte dos pla\%ne\%tas do sistema solar. 
+Nas três soluções analisadas, vistas nas
+.PDF_LINK java SUFFIX , "Listagens 1"
+.PDF_LINK typesafe 2
+e
+.PDF_LINK t4 SUFFIX , 3
+remover Plutão requer apagar ou comentar uma única linha.
+Caso o programador tenha escrito à mão o código da
+.PDF_LINK cs SUFFIX , "Listagem 4"
+ele teria que alterar três locais distintos.
+Parece pouco, mas poderia ser pior: referências à Plutão poderiam
+estar espalhadas em múltiplos arquivos, ou mesmo escondidas em
+conversões explícitas de um inteiro para o tipo
+\*[CODE]Planet\*[CODE X]\&.
 .PP
-O vetor planets tem tipo Planet, que por sua vez é um struct record
-declarado num bloco de controle <#+..#>, que só pode ocorrer no final
-de um \fItemplate\fP, como se pode observar nas três últimas linhas da
-Listagem 3. No bloco
-<#+..#>, chamado bloco de controle de \fIclass featutes\fP, além de
-permitir declarar tipos, também podem ser declarados métodos e
-propriedades.
-.PP
-Embaixo da declaração do vetor planets, ainda na Listagem 3, ocorre
-algo interessante: uma enumeração Planet é declarada, e no lugar de
-constantes de enumeração,
-é introduzido um bloco de controle contendo um
-foreach..ref que itera sobre o vetor planets declarado antes
-.PP
-Escrever um \fItemplate\fP T4 é escrever o arquivo final, e interpolar
-geração de texto conforme necessário. Donde, 
-.PDF_LINK t4 SUFFIX , "Listagem 3"
-.PP
-Primeiramente, conforme pode se ver no final da
-.PDF_LINK t4 SUFFIX , "Listagem 3"
-é declarado um tipo \*[CODE]record struct Planet\*[CODE X], que mantém
-o nome de uma constante e seus dados correspondentes. Esse tipo é
-declarado dentro de um bloco de controle\*[CODE]<#+..#>\*[CODE X].
-Blocos de controle assim permitem adicionar tipos, métodos e
-propriedades úteis para o restante do \fItemplate\fP, e deve aparecer
-exclusivamente no final do arquivo.
-.PP
-
-.PP
-A grande vantagem é que os objetos tem nome acessível por código.
-.PP
-Enumerações Java é uma das construções mais poderosas.
-.PP
-A saída desse programa, com o argumento 175 é:
-.PP
-Infelizmente, não é possível traduzir isso de modo idiomático em C#
-.PP
-A patente das enumerações do Java sugere que a implementação é um monte de switch.
-.PP
-Desse modo, o seguinte template:
-.PP
-Esse exemplo possui ainda mais margem para simplificação: no caso de
-uma enumeração que possui muito mais atributos, seria interessante
-gerar cada switch..case dentro de um laço for, ao invés de gerar cada
-um por vez, o que é na verdade mais um problema de código repetido.
-.HEADING 1 "Implementação final"
-.PP
-Gera o seguinte:
+Ainda assim, referências a Plutão, depois de removido, se tornariam
+erros de compilação, logo a IDE acusaria a maioria dos locais que
+precisariam ser alterados, a aplicação jamais seria construída com
+sucesso, e conversões explícitas poderiam ser checadas em tempo de
+execução. Porém, considere a adição de um novo planeta no sistema
+solar. Nas três soluções analisadas \(em enumeração do Java,
+\fItypesafe enum\fP e T4 \(em, novamente, uma única linha precisa ser
+adicionada. Em contrapartida, o programador que codificar tudo
+explicitamente, precisará revisar absolutamente todas as referências
+existentes à enumeração, pois mesmo que IDEs, \fIlinters\fP ou mesmo
+compiladores exijam que \*[CODE]switch..case\*[CODE X] ou \fIpattern
+matching\fP sejam "exaustivos", se apresentarem um caso
+\*[CODE]default\*[CODE X] ou equivalente, como ocorre na
+.PDF_LINK cs SUFFIX , "Listagem 4"
+este silenciará avisos ou erros de compilação.
 .FLOAT TARGET cs
 .CODE_SIZE 50
 .LS -8
@@ -177,22 +226,36 @@ Gera o seguinte:
 .so Enum.cs-annotated
 .LS +8
 .CODE_SIZE 100
-.LABEL "Listagem 4." CAPTION "Código final em C#"
+.LABEL "Listagem 4." CAPTION "Código C# gerado pelo T4 para os planetas do Java"
 .FLOAT OFF
-.PP
-Ao analisar a
-.PDF_LINK cs SUFFIX , "Listagem 4"
-surge a dúvida: não seria mais fácil escrever a enumeração e as
-expressões
-\*[CODE]switch\*[CODE X] diretamente? Pois, essa conclusão é que é
-sempre encontrada \fIonline\fP quando se estuda esse problema, e o
-principal ganho é o seguinte.
-Tanto a enumeração do Java, quanto a versão \fItypesafe enum\fP,
-quanto a versão usando T4, possuem uma vantagem única e suprema:
-manutenção. Plutão consta como um planeta, mas no ano X ele perdeu
-esse rank. Se um programador deseja remove-lo, ele só precisa apagar
-uma linha. O programador pode reordernar as constantes também
-livremente. Finalmente, um programador deve seguir o construtor
-estritamente.
 .HEADING 1 Conclusão
 .PP
+É primordial que os programadores resistam ao instinto de resolver um
+problema por vez, conforme aparecem, e enxerguem que no
+panorama geral, existem princípios unificantes tentando emergir
+no código, então mesmo que a linguagem não tenha mecanismos para
+expressa\%-los diretamente, deve-se recorrer a metaprogramação, pois a
+longo prazo, quando alterações críticas forem necessárias, essas
+deverão ser feitas em poucos passos, e com chances mínimas de erro,
+como parte de um esforço maior de combater o \fIanti-pattern\fP
+cirurgia de espingarda.
+.PP
+As linguagens de programação evoluem em diversas direções, e uma delas
+é facilitar a manutenção de código, e para estes fins, as enumerações
+do Java são um recurso altamente poderoso, que poucas outras
+linguagens possuem semelhante: Kotlin, Dart, C e C++.
+Novamente, isso não significa que as outras linguagens estão proibidas
+de usufruir dessa facilidade, nem mesmo que Java está livre de todos
+problemas de manutenção.
+Novamente, metaprogramação é essencial para complementar as linguagens
+e buscar manutenção suprema.
+.PP
+Ao passo que reflexão é uma abordagem amplamento utilizada para
+metaprogramação, foi demonstrado que geração de código é uma
+alternativa viável, que resulta em código simples, eficiente,
+depurável e entendível pelo IntelliSense.
+Assim, vale a pena o esforço de adicionar ferramentas no sistema de
+\fIbuild\fP e integra-las nas IDEs, como o T4, e que no caso deste,
+por o \fItemplate\fP ser \fIscriptado\fP em C#, um programador só
+precisa aprender os blocos de controle da ferramenta e alguns métodos
+utilitários para começar a trabalhar.

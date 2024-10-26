@@ -7,6 +7,8 @@ if [ $# = 1 ]; then
     ragel -pV $1 | dot -Tsvg > $where/${1%.*}.svg
 elif [ $# = 2 ]; then
     ragel -pVM $2 $1 | dot -Tsvg > $where/${2%.*}.svg
+elif [ $# = 3 ]; then
+    ragel -pVS $2 -M $3 $1 | dot -Tsvg > $where/${2%.*}.svg
 else
     echo 'you dumbass'
 fi
