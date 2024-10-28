@@ -1,12 +1,11 @@
+TRAB1_CODE=NextAfter.cs GeoJson.cs
 TRAB2_CODE=Enum.cs Enum.cs.tt EnumTypesafe.cs Enum.java
 
-all:doc.pdf trab2.pdf trab4.pdf
+all:doc.pdf trab2.pdf
 
-doc.pdf:doc.mom enum.cs
+doc.pdf:doc.mom $(TRAB1_CODE)
 	pdfmom -Kutf8 $< > $@
 trab2.pdf:trab2.mom $(TRAB2_CODE)
-	pdfmom -Kutf8 $< > $@
-trab4.pdf:trab4.mom $(TRAB2_CODE)
 	pdfmom -Kutf8 $< > $@
 Enum.cs:Enum.cs.tt
 	sed '/^\./d' $< | t4 -o=$@

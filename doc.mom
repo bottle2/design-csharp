@@ -7,8 +7,26 @@
 .T_MARGIN 3c
 .B_MARGIN 2c
 .PT_SIZE 12
+.BLOCKQUOTE_QUAD JUSTIFY
 .JUSTIFY
+.\"HEADING_STYLE 2 NUMBER
 .START
+.\"TODO check spacing before code
+.nr LISTING_COUNT 0 1
+.de LISTING
+.ie \\n(.$=2 \{\
+.    ds LISTING_CAPTION \\$2
+.    FLOAT TARGET "\\$1"
+.    LS -5
+.    CODE
+.\}
+.el \{\
+.    LS +5
+.    LABEL "Listagem \\n+[LISTING_COUNT]." CAPTION "\\*[LISTING_CAPTION]"
+.    FLOAT OFF
+.\}
+..
+.CITATION
 .PP
 I still remember my first look at C# in the early 2000s. Microsoft had released
 the first major version of the language.  I recall thinking that it was Java,
@@ -21,10 +39,68 @@ When you go back and look, C# version 1 really did look an awful lot like Java.
 As part of its stated design goals for ECMA, it sought to be a “simple, modern,
 general purpose object-oriented language.” At the time, it could have done
 worse thank looking like Java in order to achieve those goals.
+.CITATION END
 .HEADING 1 "Elementos da linguagem"
 .HEADING 2 "Atributos e métodos"
 .PP
-A partir, disso, é possível simular enums.
+Atributos e métodos podem ser adicionados em tipos do C#. Métodos
+podem ser de instância ou estáticos. A seção
+.PDF_LINK heranca *
+discute sobreescrita e ocultação de métodos, tanto de instância quanto
+estáticos, e sobre métodos e classes que postergam a implementação com
+\*[CODE]abstract\*[CODE X].
+Atributos e métodos têm níveis de acesso, que são discutidos na seção
+.PDF_LINK access SUFFIX . *
+.PP
+É possível injetar novos métodos de instância em tipos existentes, sem
+acesso ao código-fonte deles, usando "métodos de extensão", que são
+métodos estáticos dentro de classes estáticas, cujo primeiro parâmetro
+é prefixado com \*[CODE]this\*[CODE X]\&.
+A forma estática dos métodos de extensão ainda pode ser usada. Se
+forem genéricos, métodos de extensão podem ser chamados em outros
+métodos genéricos.
+Reiterando com mais ênfase, sua única utilidade é estender tipos que o
+programdor não controla, como da BCL, do .NET e de bibliotecas de
+terceiros.
+Se o programdor tem controle sobre um tipo, a seção
+.PDF_LINK heranca *
+discute a alternativa superior de usar implementação padrão em
+interfaces para implementar tipos de classe.
+Ainda que APIs deficientes deveriam ser corrigidas \fIupstream\fP,
+até lá métodos de extensão podem mitigiar lacunas.
+A grande maioria deles serve para lubrificar a interação entre APIs e
+código de aplicação.
+.PP
+Há como simular uniões atráves das anotações de compilador
+\*[CODE]StructLayoutAttribute\*[CODE X] e
+\*[CODE]FieldOffsetAttribute\*[CODE X]\&.
+.PP
+A
+.PDF_LINK nextafter SUFFIX , "Listagem X"
+que copia a implementação do blog Realtime Madness,\c
+.FOOTNOTE
+.PDF_WWW_LINK http://realtimemadness.blogspot.com/2012/06/nextafter-in-c-without-allocations-of.html
+.FOOTNOTE OFF
+ mostra o uso de ambos união e métodos de extensão para adicionar
+a função \*[CODE]nextafterf()\*[CODE X] do C no C#, cujo comportamento
+é igual às funções
+\*[CODE]float.BitIncrement()\*[CODE X] e
+\*[CODE]float.BitDecrement()\*[CODE X] introduzidas no .NET 7. As três
+APIs implementam as operações gerais homogêneas
+\*[CODE]nextUp\*[CODE X] e \*[CODE]nextDown\*[CODE X] do IEEE 754, que
+devolvem o próximo número de ponto flutuante representável, ou o
+anterior, ao fornecido.
+Observe que a
+implementação é somente para float. Caso se deseja double ou decimal, ou outra
+precisão, sem duplicar código, não há outro meio senão gerar código,
+por exemplo, usando T4, pois os tipos não tem paretesco para escrever
+algo genérico.
+Como pode se ver na união, aninhada na classe estática, ambos os
+atributos \*[CODE]f\*[CODE X] e \*[CODE]i\*[CODE X] possuem o mesmo
+comprimento e são posicionados manualmente no início da struct.
+.LISTING nextafter "Método de extensão para"
+.so NextAfter.cs
+.LISTING OFF
 .HEADING 2 "Propriedades"
 .PP
 Três utilidades particularmente interessantes são: 1) depuração, 2) retro, 3)
@@ -40,7 +116,7 @@ set e init podem ser definidos para as diferentes operações de leitura
 No caso de propriedades por referência usando \*[CODE]ref\*[CODE X], apenas get
 pode ser usado, pois o compilador não diferencia mais leitura e escrita e o
 chamador controla isso agora.
-.HEADING 2 "Herança"
+.HEADING 2 NAMED heranca "Herança"
 .HEADING 2 "Polimorfismo"
 .HEADING 2 NAMED ctor "Construtores e destrutores"
 .PP
@@ -135,7 +211,7 @@ Discutir exceções + async + multithread.
 .PP
 Ainda sobre async, exceções são reutilizadas para controlar a
 continuidade de execução de Tasks, através do CancellationToken.IsCancelled.
-.HEADING 2 "Encapsulamento e ocultação de informação"
+.HEADING 2 NAMED access "Encapsulamento e ocultação de informação"
 .PP
 Os membros de uma classe podem ser protegidos por modificadores de acesso como
 \*[CODE]private\*[CODE X], \*[CODE]private protected\*[CODE X],
@@ -146,6 +222,8 @@ organizar manualmente classes do C#, para aumentar a velocidade de compilação 
 melhorar a organização do código pela ação do próprio modificador
 \*[CODE]internal\*[CODE X].
 .HEADING 2 "Instanciação"
+.PP
+boxing
 .PP
 struct vs class
 .PP
@@ -169,49 +247,29 @@ São bastante simples, literalmente uma classe declarada dentro de outra.
 Parecido com namespace. Acessibilidade muda.
 .PP
 Excelente forma de organizar código, tão legal quanto funções aninhadas.
-.HEADING 2 "Classes anônimas"
+.HEADING 2 "Classes anônimas \(OK"
 .PP
-É possível criar objetos com atributos arbitrários, e fazer vetores destes, sem
-declarar tipos antes. Diferente do Java, não é possível que esse objeto extenda
-uma classe e sobreescreva seus métodos.  No geral, não têm muita serventia. Seu
-uso é de mau gosto, bem como todos os usos de \*[CODE]var\*[CODE X].
-Geralmente é encontrado em gambiarras feitas correndo, como alguma serialização
-de dados, usando muita reflexão por sinal:
-.QUOTE
-.CODE
-using System.Text.Json;
-
-double xMin = XXX;
-double yMin = XXX;
-double xMax = XXX;
-double yMax = XXX;
-
-Console.WriteLine(JsonSerializer.Serialize(new
-{
-    type = "FeatureCollection",
-    features = new[] { new {
-        type = "Feature",
-        geometry = new
-        {
-            type = "Polygon",
-            coordinates = new[] { new[]
-            {
-                new[] { xMin, yMin },
-                      [ xMin, yMax ],
-                      [ xMax, yMax ],
-                      [ xMax, yMin ],
-                      [ xMin, yMin ],
-            }}
-        },
-        properties = new { id = 0 }
-    }}
-}));
-.QUOTE END
+É possível criar objetos com atributos arbitrários, e fazer vetores
+destes, sem declarar tipos antes. Diferente do Java, não é possível
+que esse objeto estenda uma classe e sobreescreva seus métodos.  No
+geral, não têm muita serventia. Seu uso é de mau gosto, bem como todos
+os usos de \*[CODE]var\*[CODE X]\&.  Geralmente é encontrado em
+gambiarras feitas correndo, como alguma seria\%li\%zação de dados, e
+usando muita reflexão, por sinal.
+.LISTING geojson "Um GeoJSON implementado com pouco esforço"
+.so GeoJson.cs
+.LISTING OFF
 .HEADING 2 "Tipos genéricos"
 .PP
 Não há overload de tipos genéricos, eles são diferenciados em IL pela
 quantidade de argumentos. Então, é preciso usar nomes de tipo diferentes.
+.PP
+A inferência é fraca
+.PP
+Tipos fantasmas não são viáveis.
 .HEADING 2 "Traits"
+.PP
+*Attribute
 .PP
 Do modo como o C# evoluiu, emergiu um sistema de \fItraits\fP bastante curioso.
 Trata-se de recursos da linguagem que dependem que objetos implementem certas
