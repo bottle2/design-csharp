@@ -14,7 +14,7 @@
 .\"TODO check spacing before code
 .nr LISTING_COUNT 0 1
 .de LISTING
-.ie \\n(.$=2 \{\
+.ie \\n(.$=2 \{
 .    ds LISTING_CAPTION \\$2
 .    FLOAT TARGET "\\$1"
 .    LS -5
@@ -41,19 +41,19 @@ general purpose object-oriented language.” At the time, it could have done
 worse thank looking like Java in order to achieve those goals.
 .CITATION END
 .HEADING 1 "Elementos da linguagem"
-.HEADING 2 "Atributos e métodos"
+.HEADING 2 "Atributos e métodos \(OK"
 .PP
-Atributos e métodos podem ser adicionados em tipos do C#. Métodos
+Atributos e métodos podem ser adicionados a tipos do C#. Métodos
 podem ser de instância ou estáticos. A seção
 .PDF_LINK heranca *
 discute sobreescrita e ocultação de métodos, tanto de instância quanto
 estáticos, e sobre métodos e classes que postergam a implementação com
-\*[CODE]abstract\*[CODE X].
+\*[CODE]\%abstract\*[CODE X]\&.
 Atributos e métodos têm níveis de acesso, que são discutidos na seção
 .PDF_LINK access SUFFIX . *
 .PP
 É possível injetar novos métodos de instância em tipos existentes, sem
-acesso ao código-fonte deles, usando "métodos de extensão", que são
+acesso ao código\%-fonte deles, usando "métodos de extensão", que são
 métodos estáticos dentro de classes estáticas, cujo primeiro parâmetro
 é prefixado com \*[CODE]this\*[CODE X]\&.
 A forma estática dos métodos de extensão ainda pode ser usada. Se
@@ -66,42 +66,70 @@ Se o programdor tem controle sobre um tipo, a seção
 .PDF_LINK heranca *
 discute a alternativa superior de usar implementação padrão em
 interfaces para implementar tipos de classe.
-Ainda que APIs deficientes deveriam ser corrigidas \fIupstream\fP,
-até lá métodos de extensão podem mitigiar lacunas.
-A grande maioria deles serve para lubrificar a interação entre APIs e
-código de aplicação.
+O principal uso é lubrificar a interação entre APIs e código de
+aplicação, e mitigar deficiências de APIs, ainda que isso devesse
+ocorrer \fIupstream\fP.
 .PP
-Há como simular uniões atráves das anotações de compilador
-\*[CODE]StructLayoutAttribute\*[CODE X] e
-\*[CODE]FieldOffsetAttribute\*[CODE X]\&.
+Uniões são simuladas com as anotações de compilador
+\*[CODE]\%StructLayoutAttribute\*[CODE X] e
+\*[CODE]\%FieldOffsetAttribute\*[CODE X]\&.
 .PP
 A
-.PDF_LINK nextafter SUFFIX , "Listagem X"
+.PDF_LINK nextafter SUFFIX , "Listagem 1"
 que copia a implementação do blog Realtime Madness,\c
 .FOOTNOTE
 .PDF_WWW_LINK http://realtimemadness.blogspot.com/2012/06/nextafter-in-c-without-allocations-of.html
 .FOOTNOTE OFF
  mostra o uso de ambos união e métodos de extensão para adicionar
-a função \*[CODE]nextafterf()\*[CODE X] do C no C#, cujo comportamento
-é igual às funções
+a função \*[CODE]nextafterf()\*[CODE X] do C no C#,
+semelhante ao
 \*[CODE]float.BitIncrement()\*[CODE X] e
-\*[CODE]float.BitDecrement()\*[CODE X] introduzidas no .NET 7. As três
+\*[CODE]float.BitDecrement()\*[CODE X] introduzidos no .NET 7.
+As três
 APIs implementam as operações gerais homogêneas
 \*[CODE]nextUp\*[CODE X] e \*[CODE]nextDown\*[CODE X] do IEEE 754, que
-devolvem o próximo número de ponto flutuante representável, ou o
-anterior, ao fornecido.
-Observe que a
-implementação é somente para float. Caso se deseja double ou decimal, ou outra
-precisão, sem duplicar código, não há outro meio senão gerar código,
-por exemplo, usando T4, pois os tipos não tem paretesco para escrever
-algo genérico.
-Como pode se ver na união, aninhada na classe estática, ambos os
-atributos \*[CODE]f\*[CODE X] e \*[CODE]i\*[CODE X] possuem o mesmo
-comprimento e são posicionados manualmente no início da struct.
+avaliam o próximo número de ponto flutuante representável ao fornecido, ou o
+anterior.
+Ainda na
+.PDF_LINK nextafter SUFFIX , "Listagem 1"
+vê-se que a união funciona posionando manualmente os atributos
+\*[CODE]f\*[CODE X] e \*[CODE]i\*[CODE X], que possuem o mesmo
+tamanho, no início da \*[CODE]struct Pun\*[CODE X]\&. A especificação
+do C# permite leitura e escrita de ambos atributos sem restrição.
+.PP
+A implementação da 
+.PDF_LINK nextafter "Listagem 1"
+é somente para \*[CODE]float\*[CODE X]\&.
+Não é possível fazer um método genérico que trate também
+\*[CODE]double\*[CODE X] e \*[CODE]\%decimal\*[CODE X]\&,
+pois não têm parentesco. A única abordagem viável sem duplicar código
+é gerar código usando, por exemplo, T4.
 .LISTING nextafter "Método de extensão para"
 .so NextAfter.cs
 .LISTING OFF
 .HEADING 2 "Propriedades"
+.PP
+A convenção é que atributos nunca devem ser públicos, sendo acessados
+somente através de métodos. Há três razões: 1) retrocompatibilidade: o
+atributo pode sumir, mas usuários dele podem continuar funcionando se
+o método simular sua existência e efeitos colaterais, 2) haver um
+método permite introduzir um ponto de depuração, e 3) controle mais
+fino de acesso, com validações.
+.PP
+Tudo isso pode ser realizado com métodos, mas no C# propriedades
+simplificam levemente a tarefa. Uma propriedade define acessores
+\*[CODE]get\*[CODE X]\&, \*[CODE]set\*[CODE X] \*[CODE]init\*[CODE]\&.
+
+A explicação é que um método pode simular
+o tipo subjacente depois do atributo sumir, 
+No C#, propriedades cumprem esse papel.
+A regra é que atributos não devem ser públicas, 
+públicos, pois
+.PP
+No C# existem as propriedades em si, referidas simplesmente como
+propriedades, e a propriedade especial indexador.
+.PP
+Propriedades 
 .PP
 Três utilidades particularmente interessantes são: 1) depuração, 2) retro, 3)
 controle de acesso
@@ -116,6 +144,10 @@ set e init podem ser definidos para as diferentes operações de leitura
 No caso de propriedades por referência usando \*[CODE]ref\*[CODE X], apenas get
 pode ser usado, pois o compilador não diferencia mais leitura e escrita e o
 chamador controla isso agora.
+.PP
+Propriedades podem ser sobreescritas e escondidas, conforme discutido
+em
+.PDF_LINK heranca SUFFIX . *
 .HEADING 2 NAMED heranca "Herança"
 .HEADING 2 "Polimorfismo"
 .HEADING 2 NAMED ctor "Construtores e destrutores"
