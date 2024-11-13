@@ -109,44 +109,50 @@ pois não têm parentesco. A única abordagem viável sem duplicar código
 .LISTING OFF
 .HEADING 2 "Propriedades"
 .PP
-A convenção é que atributos nunca devem ser públicos, sendo acessados
-somente através de métodos. Há três razões: 1) retrocompatibilidade: o
-atributo pode sumir, mas usuários dele podem continuar funcionando se
-o método simular sua existência e efeitos colaterais, 2) haver um
-método permite introduzir um ponto de depuração, e 3) controle mais
-fino de acesso, com validações.
+Propriedades são um mecanismo idiomático de realizar encapsulamento de
+dados de tipos. Conforme a tradição, serve três utilidades: 1)
+retrocompatibilidade simulando atributos e seus efeitos colaterais
+depois que deixam de existir, 2) depuração ao viabilizar
+\fIbreakpoints\fP e 3) controle de acesso mais fino, introduzindo
+validação e restringindo leitura e escrita.
 .PP
-Tudo isso pode ser realizado com métodos, mas no C# propriedades
-simplificam levemente a tarefa. Uma propriedade define acessores
-\*[CODE]get\*[CODE X]\&, \*[CODE]set\*[CODE X] \*[CODE]init\*[CODE]\&.
-
-A explicação é que um método pode simular
-o tipo subjacente depois do atributo sumir, 
-No C#, propriedades cumprem esse papel.
-A regra é que atributos não devem ser públicas, 
-públicos, pois
+Enquanto propriedades agem como atributos, uma variação chamada
+"indexador" permite o tipo ser acessado como se fosse um vetor.
+Qualquer \*[CODE]IList\*[CODE X] ou \*[CODE]IDictionary\*[CODE X]\&,
+seja do .NET ou fornecido pelo usuário, contém indexadores. O
+indexador é introduzido pelo tipo dele, seguido de
+\*[CODE]this\*[CODE X] e então uma lista de índices entre colchetes,
+exatamente como parâmetros. Sobrecarga de indexadores é permitida.
+Esses índices ficam disponível no corpo dos acessores, descritos a
+seguir.
 .PP
-No C# existem as propriedades em si, referidas simplesmente como
-propriedades, e a propriedade especial indexador.
-.PP
-Propriedades 
-.PP
-Três utilidades particularmente interessantes são: 1) depuração, 2) retro, 3)
-controle de acesso
-.PP
-Um recurso interessante introduzido foi propriedades auto-implementadas.  Isso
-cria um atributo automaticamente, particular à sua propriedade, e interagido
-com a palavra-chave \*[CODE]value\*[CODE X].
-.PP
-Uma propriedade especial é o indexador. Assim como as demais propriedades, get,
-set e init podem ser definidos para as diferentes operações de leitura
-.PP
-No caso de propriedades por referência usando \*[CODE]ref\*[CODE X], apenas get
-pode ser usado, pois o compilador não diferencia mais leitura e escrita e o
-chamador controla isso agora.
-.PP
-Propriedades podem ser sobreescritas e escondidas, conforme discutido
-em
+Propriedades e indexadores são usados através de acessores.Há três
+tipos de acessores: o acessor \*[CODE]get\*[CODE X] é chamado para
+"ler", \*[CODE]set\*[CODE X] é chamado para "escrever" e
+\*[CODE]init\*[CODE X] para "escrever" no máximo uma vez. Uma
+propriedade ou indexador e seus acessores podem cada um ter um nível
+de acesso, os mesmos descritos em 
+.PDF_LINK access SUFFIX . *
+Se a propriedade ou indexador for \*[CODE]ref\*[CODE X]\&, somente o
+acessor \*[CODE]get\*[CODE X] pode ser declarado, e caso não se queira
+escrita no tipo devolvido por referência, basta usar \*[CODE]ref
+readonly\*[CODE X]\&. Se uma propriedade ou indexador apresenta
+somente \*[CODE]get\*[CODE X], este pode ser substituido junto com os
+caracteres de abre e fecha-chaves por um \fIexpression body\fP
+prefixado com \*[CODE]=>\*[CODE X].
+Caso nenhum acessor tenha um corpo, diz-se que a propriedade é
+auto-implementada, ou seja, um \fIbacking field\fP é gerado
+automaticamente.
+Uma propriedade ou indexador cujos acessores tenham um corpo devem
+gerenciar manualmente seus \fIbacking fields\fP, isto é, meramente
+seus atributos subjacentes.
+A palavra-chave \*[CODE]value\*[CODE X] é usada para conhecer o valor
+fornecido para o \*[CODE]set\*[CODE X] e \*[CODE]init\*[CODE X] de uma
+propriedade, enquanto o corpo de um \*[CODE]get\*[CODE X] deve
+devolver algo com \*[CODE]return\*[CODE X]\&.
+Finalmente, uma propriedade pode ser atribuída algum valor
+textualmente após seus acessores, isso ocorre antes do construtor ser
+chamado.
 .PDF_LINK heranca SUFFIX . *
 .HEADING 2 NAMED heranca "Herança"
 .HEADING 2 "Polimorfismo"
