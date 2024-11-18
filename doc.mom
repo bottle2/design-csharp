@@ -159,7 +159,6 @@ textualmente após seus acessores, isso ocorre antes do construtor ser
 chamado.
 .HEADING 2 NAMED heranca "Herança e polimorfismo"
 .PP
-.PP
 Discutir classes de tipos.
 .HEADING 2 NAMED ctor "Construtores, destrutores e instanciação"
 .PP
@@ -190,7 +189,7 @@ Construtores se parecem sintaticamente com métodos, mas são
 simplesmente o nome do tipo seguido de uma lista de parâmetros.
 Construtores podem ser sobrecarregados.  Construtores são apenas
 metade da inicialização de um tipo: são executados depois dos
-atributos e propriedades serem inicializados.
+atributos e propriedades serem inicializados. \" TODO
 .PP
 Toda \*[CODE]struct\*[CODE X], na verdade todos os tipos de valor,
 possuem um construtor implícito sem parâmetros chamado construtor
@@ -212,16 +211,17 @@ Apesar de tudo, a inicialização estática é atômica, o que é
 enormemente crucial para implementar o \fIdesign pattern singleton\fP,
 funcionando até em situações \fImulti-thread\fP.
 .PP
-No rastreamento de pilha, \*[CODE]ctor\*[CODE X] simboliza construtores de
-instância, e \*[CODE]cctor\*[CODE X] simboliza construtores estáticos.
+No rastreamento de pilha, \*[CODE]ctor\*[CODE X] simboliza
+construtores de instância, e \*[CODE]cctor\*[CODE X] simboliza
+construtores estáticos.
 .PP
 boxing
 .PP
 ref e stackalloc
 .PP
-Recentemente (quando?) foi introduzido uma facilidade que,  foram introduzidos
-os records, que é a implementação automática de structs ou classes imutáveis,
-uma facilidade que exige pouco código.
+Recentemente (quando?) foi introduzido uma facilidade que,  foram
+introduzidos os records, que é a implementação automática de structs
+ou classes imutáveis, uma facilidade que exige pouco código.
 .HEADING 2 "Tratamento de exceções \(OK"
 .PP
 O sistema de tratamento de exceções do C# não tem nada fora do comum.
@@ -314,17 +314,25 @@ respectivamente, limita visibilidade somente para dentro do tipo onde
 está, não limita visibilidade, e limita visibilidade às classes
 derivadas.
 Obviamente, reflexão pode contornar todas essas restrições.
-.HEADING 2 "Interfaces"
+.HEADING 2 "Interfaces \(OK"
 .PP
-Implementação padrão
-.PP
-Herança-múltipla
-.PP
-Interface principal
-.PP
-Reuso de código (zero)
-.PP
-Métodos estáticos sobreescrevíveis.
+Inicialmente podem ser vistas como uma forma de herança-múltipla, mas
+as interfaces brilham se vistas como "classes de tipo", ou
+simplesmente "os tipos". Interfaces podem definir métodos com uma
+implementação padrão interagindo com outros membros definidos nela ou
+em interfaces que descende, e até mesmo proibir sobreescrita com
+\*[CODE]sealed\*[CODE X]\&. Infelizmente, a implementação padrão não
+consegue implementar membros definidos em interfaces da qual deriva.
+Interfaces podem definir métodos e propriedades \*[CODE]static
+abstract\*[CODE X], que são membros estáticos que podem ser
+sobreescritos em tipos que implementam a interface, o que é
+absurdamente vital pra definir dados e comportamentos específicos sem
+inchar as instâncias, ou mesmo sem ter uma. Quando duas interfaces
+definem métodos e propriedades com a mesma assinatura, a implementação
+é compartilhada, porém um tipo pode ter uma interface principal e
+implementar métodos somente para ela, e implementar as demais com
+assinaturas idênticas separadamente, prefixando o nome da interface
+como se fosse parte de um \fInamespace\fP.
 .HEADING 2 "Classes aninhadas e funções locais \(OK"
 .PP
 Classes aninhadas e funções locais são bastante simples, literalmente
@@ -367,41 +375,6 @@ quantidade de argumentos. Então, é preciso usar nomes de tipo diferentes.
 A inferência é fraca
 .PP
 Tipos fantasmas não são viáveis.
-.HEADING 2 "Traits"
-.PP
-*Attribute
-.PP
-Do modo como o C# evoluiu, emergiu um sistema de \fItraits\fP bastante curioso.
-Trata-se de recursos da linguagem que dependem que objetos implementem certas
-\fIinterfaces\fP, ou então que declarem métodos ou propriedades com certas
-assinaturas, sem necessariamente implementar uma interface, ou então
-construções interpretadas especialmente pelo compilador. O Base Class Library
-(BCL), nesse sentido, fornece \fIinterfaces\fP básicas para viabilizar essas
-construções especiais.
-.PP
-Outro caso é o do \*[CODE]using\*[CODE X], discutido na seção
-.PDF_LINK ctor +
-.TAB_SET 1 0 5P L
-.TAB_SET 2 8P 30P L QUAD
-.TAB 1
-\*[CODE]using\*[CODE X]\*[TB+]
-\*[CODE]IDispose\*[CODE X]
-.TAB 1
-\*[CODE]await\*[CODE X]\*[TB+]
-Algum método acessível com a assinatura \*[CODE]<<TaskType>> GetAwaiter()\*[CODE X]
-.TAB 1
-\*[CODE]foreach\*[CODE X]\*[TB+]
-Algum método GetEnumerator()
-.TAB 1
-\*[CODE]foreach (ref ...\*[CODE X]\*[TB+]
-A propriedade \*[CODE]Current\*[CODE X] do enumerador devolve uma referência com \*[CODE]ref\*[CODE X]
-.TQ
-.\".FLOAT
-.\".TS
-.\"l l.
-.\"kkk
-.\".TE
-.\".FLOAT OFF
 .HEADING 2 "Closures \(OK"
 .PP
 Existem expressões lambda em C#, porém a captura de objetos é anti-intuitiva!
