@@ -41,6 +41,10 @@ general purpose object-oriented language.” At the time, it could have done
 worse thank looking like Java in order to achieve those goals.
 .CITATION END
 .HEADING 1 "Elementos da linguagem"
+.PP
+O presente relatório procura passar rapidamente sobre as principais
+facilidades do C#, e discutir com mais atenção \fIdesgin patterns\fP,
+deficiências da linguagem e truques diversos.
 .HEADING 2 "Atributos e métodos \(OK"
 .PP
 Atributos e métodos podem ser adicionados a tipos do C#. Métodos
@@ -107,7 +111,7 @@ pois não têm parentesco. A única abordagem viável sem duplicar código
 .LISTING nextafter "Método de extensão para"
 .so NextAfter.cs
 .LISTING OFF
-.HEADING 2 "Propriedades"
+.HEADING 2 "Propriedades \(OK"
 .PP
 Propriedades são um mecanismo idiomático de realizar encapsulamento de
 dados de tipos. Conforme a tradição, serve três utilidades: 1)
@@ -153,121 +157,163 @@ devolver algo com \*[CODE]return\*[CODE X]\&.
 Finalmente, uma propriedade pode ser atribuída algum valor
 textualmente após seus acessores, isso ocorre antes do construtor ser
 chamado.
-.PDF_LINK heranca SUFFIX . *
-.HEADING 2 NAMED heranca "Herança"
-.HEADING 2 "Polimorfismo"
-.HEADING 2 NAMED ctor "Construtores e destrutores"
+.HEADING 2 NAMED heranca "Herança e polimorfismo"
 .PP
-O construtor e o destrutor, este chamado de finalizador no C#, têm o mesmo nome
-do tipo, com o destrutor se diferenciando por ter um til “~” prefixado. Ambos
-se parecem sintaticamente com funções, mas não apresentam um tipo de devolução,
-nem mesmo void. Construtores podem ter vários overloads, mas o destrutor só
-pode ser um, declarado sem parâmetros.
 .PP
-O uso de destrutores foi defasado, e é preferido que o tipo implemente o método
-Dispose do IDisposable, e opcionalmente DisposeAsync do IAsyncDisposable. (Por
-quê?)
+Discutir classes de tipos.
+.HEADING 2 NAMED ctor "Construtores, destrutores e instanciação"
 .PP
-Construtores são apenas metade da inicialização de uma tipo: são executados
-depois dos atributos e propriedades serem inicializados.
+Destruturores, chamados de finalizadores no C#, foram defasados e sua
+discussão é irrelevante. A alternativa superior e segura é o método
+\*[CODE]Dispose()\*[CODE X] do \*[CODE]IDisposable\*[CODE X] e,
+opcionalmente, o método \*[CODE]DisposeAsync()\*[CODE X] do
+\*[CODE]IAsyncDisposable\*[CODE X]\&. Esse métodos são chamados
+garantidamente e automaticamente pela construção
+\*[CODE]using\*[CODE X], irrespectivo de \*[CODE]goto\*[CODE X],
+\*[CODE]return\*[CODE X], exceções ou outros \*[CODE]using\*[CODE X]
+aninhados.
 .PP
-A ordem de inicialização estática é bastante cabeluda, complicada por questões
-de desempenho. É comum cometer acessar atr 1) \*[CODE]BeforeFieldInit\*[CODE X] 2) Apesar de
-tudo, a inicialização estática é atômica, de modo que é seguro usar Singletons
-em situações. Grafo de dependência. multithread, mesmo com BeforeFieldInit.
-Finalmente
+Tipos podem ser gerenciados, não gerenciados ou delegados. Delegados é
+um nome bonito para ponteiro de função, mas papagaios dirão que são
+diferentes (apesar de não haver diferença), mas ponteiros existem tais
+como são no C#, em contextos inseguros. Tipos gerenciados são
+controlados pelo coletor de lixo, são obrigatoriamente passados por
+referência, e vivem na "\fIheap\fP". Tipos não gerenciados sobrevivem
+enquanto forem copiados.  Tipos gerenciados e não gerenciados podem
+conter um ao outro sem restrições.
+Tipos não gerenciados heram de \*[CODE]ValueType\*[CODE X], e
+compreendem \*[CODE]struct\*[CODE X]s, tuplas de valor e tipos
+primitivos como \*[CODE]int\*[CODE X] e \*[CODE]float\*[CODE X]\&.
+\*[CODE]string\*[CODE X] é um tipo muito especial.
 .PP
-Toda struct, na verdade todos os tipos de valor, possuem um construtor
-implícito sem parâmetros chamado construtor default, que é equivalente à
-memória zerada, e fornece o chamado valor default. Ainda que o usuário declare
-um construtor sem parâmetros para uma struct, o valor default ainda é usado
-para o conteúdo de vetores e expressões default.
+Construtores se parecem sintaticamente com métodos, mas são
+simplesmente o nome do tipo seguido de uma lista de parâmetros.
+Construtores podem ser sobrecarregados.  Construtores são apenas
+metade da inicialização de um tipo: são executados depois dos
+atributos e propriedades serem inicializados.
+.PP
+Toda \*[CODE]struct\*[CODE X], na verdade todos os tipos de valor,
+possuem um construtor implícito sem parâmetros chamado construtor
+\fIdefault\fP, que é equivalente à memória zerada, e fornece o chamado
+valor \*[CODE]default\*[CODE X]. Ainda que o usuário declare um
+construtor sem parâmetros para uma \*[CODE]struct\*[CODE X] que
+atribui valores à vários atributos, o construtor
+\*[CODE]default\*[CODE X] ainda é usado para o conteúdo de vetores e
+expressões \*[CODE]default\*[CODE X]\&.
+.PP
+A ordem de inicialização estática é bastante cabeluda, complicada por
+questões de desempenho, como o atributo implícito
+\*[CODE]BeforeFieldInit\*[CODE X] que introduz comportamento não
+específico. Dependências circulares são especialmente perigosas
+durante a inicialização estática, e há histórias da inicialização
+estática causar \fIdeadlocks\fP ou \fIcrashar\fP a aplicação
+silenciosamente.
+Apesar de tudo, a inicialização estática é atômica, o que é
+enormemente crucial para implementar o \fIdesign pattern singleton\fP,
+funcionando até em situações \fImulti-thread\fP.
+.PP
+No rastreamento de pilha, \*[CODE]ctor\*[CODE X] simboliza construtores de
+instância, e \*[CODE]cctor\*[CODE X] simboliza construtores estáticos.
+.PP
+boxing
+.PP
+ref e stackalloc
 .PP
 Recentemente (quando?) foi introduzido uma facilidade que,  foram introduzidos
 os records, que é a implementação automática de structs ou classes imutáveis,
 uma facilidade que exige pouco código.
+.HEADING 2 "Tratamento de exceções \(OK"
 .PP
-No rastreamento de pilha, \*[CODE]ctor\*[CODE X] simboliza construtores de
-instância, e \*[CODE]cctor\*[CODE X] simboliza construtores estáticos.
-.HEADING 2 "Tratamento de exceções"
+O sistema de tratamento de exceções do C# não tem nada fora do comum.
+O \fIstatement\fP \*[CODE]throw\*[CODE X] lança exceções, estas
+flutuam de método em método até ser capturada com cláusulas 
+\*[CODE]try..catch..finally\*[CODE X]\&. As cláusulas
+\*[CODE]catch\*[CODE X] e \*[CODE]finally\*[CODE X] são opcionais, mas
+pelo menos uma deve ocorrer após um \*[CODE]try\*[CODE X]\&. Várias
+cláusulas \*[CODE]catch\*[CODE X] para diferentes exceções podem ser
+declaradas, sendo a mais específica a escolhida para executar,
+considerando a hie\%rar\%quia de exceções. A última cláusula
+\*[CODE]catch\*[CODE X] pode omitir o tipo de exceção para capturar
+qualquer uma, e a variável contendo a exceção capturada pode ser
+omitida se não for necessária. Uma exceção pode ser re-lançada
+dentro da cláusula \*[CODE]catch\*[CODE X], ou outra nova e diferente
+mais apropriada, mas às vezes é mais fácil ou correto não capturar a
+exceção. Cláusulas \*[CODE]try..catch..finally\*[CODE X] podem se
+aninhar recursivamente.
 .PP
-Nunca lance exceções dentro de ToString()!!!!!!!!
+Diferente do Java, o C# não distingue exceções verificadas e não
+verificadas, isto é, o C# não fornece mecanismo para a assinatura dos
+métodos anunciarem quais exceções podem ser lançadas e
+obrigatoriamente capturadas. O usuário depende da documentação e
+tentativa e erro para descobrir quais exceções um método pode talvez
+lançar, sendo a marcação XML
+\*[CODE]<exception ..</exception>\*[CODE X] a que documenta isso em
+comentários.
 .PP
-O tratamento de exceções é bastante comum, iniciado com o \fIstatement\fP
-\*[CODE]throw\*[CODE X] e capturado com a cláusula \*[CODE]try { ... } catch {
-... } finally { ... }\*[CODE X].
+Sobre o clássico problema da interação entre \*[CODE]return\*[CODE X]
+e \*[CODE]finally\*[CODE X]: \*[CODE]return\*[CODE X] é proibido em
+uma cláusula \*[CODE]finally\*[CODE X]\&. Se houver um
+\*[CODE]return\*[CODE X] dentro de uma cláusula \*[CODE]try\*[CODE X]
+ou \*[CODE]catch\*[CODE X], há duas possibilidades: 1) se o tipo
+devolvido for gerenciado, alterações da instância dentro da cláusula
+\*[CODE]finally\*[CODE X] será visível para quem chamou o método, e 2)
+alterações em tipos não gerenciados ocorrerão em uma cópia na cláusula
+\*[CODE]finally\*[CODE X] após o \*[CODE]return\*[CODE X] executar.
 .PP
-a
+Exceções jamais devem ser lançadas dentro do método comum
+\*[CODE]ToString()\*[CODE X]\&.
 .PP
-A respeito do clássico problema da interação entre \*[CODE]return\*[CODE X] e \*[CODE]finally\*[CODE X]:
-.QUOTE
-.CODE
-int func() {
-    try {
-        return 1;
-    } finally {
-        return 2;
-    }
-}
-.QUOTE OFF
+Tratamento de exceções na Unity é deprimente.
+Tanto o \*[CODE]Debug.Assert()\*[CODE X] quanto
+\*[CODE]UnityEngine.Assertions.Assert.IsTrue()\*[CODE X] não
+funcionam, mesmo que a documentação Unity diga que há como
+habilita-las e força-las, ou uma nota de atualização diga que foram
+consertadas: não é verdade!
+Além disso, na tentativa de ser amigável para iniciantes, exceções
+nunca invocam o depurador, pois ao invés disso, o
+\*[CODE]GameObject\*[CODE X] morre silenciosamente para que o jogo
+continue funcionando "normalmente".  O único jeito de depurar jogos em
+Unity é à moda antiga: imprimindo no \*[CODE]Debug.Log\*[CODE X] e
+posicionando \fIbreakpoints\fP manualmente na tentativa e erro.
 .PP
-Foi decidido que isso é proibido. E na seguinte situação:
-.QUOTE
-.CODE
-Console.WriteLine(func());
-int func() {
-    int x = 1;
-    try {
-        return x;
-    } finally {
-        x = 2;
-    }
-}
-.QUOTE OFF
+Ainda que a regra seja nunca usar exceções para tratar erros de
+programação e nunca usa-las para controlar a execução normal de
+código, duas vezes a Microsoft decidiu dar um novo propósito às
+exceções: parar \fIthreads\fP e cancelar \fItasks\fP, através de
+\*[CODE]\%ThreadInterruptedException\*[CODE X] e
+\*[CODE]TaskCanceledException\*[CODE X]\&.
+Como consequência, \fIthreads\fP e \fItasks\fP morrem silenciosamente,
+e o depurador nunca consegue intercepta\%-las antes.
+Mesmo que haja documentação de alguma configuração mágica no Visual
+Studio que faça exceções funcionarem em situações \fImulti-thread\fP:
+não funciona! Uma gambiarra para \fItasks\fP é chamar algum
+\*[CODE]\&.ContinueWith(a => Debug.Log(a.Exception),
+\%TaskContinuationOptions.OnlyOnFaulted);\*[CODE X]\&. Outra opção é
+aninhar todo o corpo de todas as \fIthreads\fP e \fItasks\fP suspeitas
+manulamente em um \*[CODE]try..catch\*[CODE X] gigante. Senão isso,
+então imprimir coisas na tentativa e erro e depois posicionar um
+\fIbreakpoint\fP até reproduzir o problema. 
+.HEADING 2 NAMED access "Encapsulamento e ocultação de informação \(OK"
 .PP
-O valor impresso é 1. Foi decidido que é devolvido o valor avaliado no momento,
-e atribuições do finally não são visíveis ao return, mas mudanças de estado em
-objetos de referência, sim:
-.QUOTE
-.CODE
-Console.WriteLine(func().x);
-Foo func() {
-    Foo x = new() { x = 1 };
-    try {
-        return x;
-    } finally {
-        x.x = 2;
-    }
-}
-class Foo { int x {get; set; } }
-.QUOTE OFF
-.PP
-A respeito de asserções, o cenário é deprimente.
-Discutir assert.
-.PP
-Discutir exceções + async + multithread.
-.PP
-Ainda sobre async, exceções são reutilizadas para controlar a
-continuidade de execução de Tasks, através do CancellationToken.IsCancelled.
-.HEADING 2 NAMED access "Encapsulamento e ocultação de informação"
-.PP
-Os membros de uma classe podem ser protegidos por modificadores de acesso como
-\*[CODE]private\*[CODE X], \*[CODE]private protected\*[CODE X],
-\*[CODE]protected\*[CODE X], \*[CODE]internal\*[CODE X] e \*[CODE]public\*[CODE X].
-O modificador \*[CODE]internal\*[CODE X] restringe a acessibilidade do membro à
-objetos que estão no mesmo \fIassembly\fP. \fIAssemblies\fP são uma forma de
-organizar manualmente classes do C#, para aumentar a velocidade de compilação e
-melhorar a organização do código pela ação do próprio modificador
-\*[CODE]internal\*[CODE X].
-.HEADING 2 "Instanciação"
-.PP
-boxing
-.PP
-struct vs class
-.PP
-ValueType
-.PP
-ref e stackalloc
+Os membros de uma classe podem ser protegidos pelos seguintes
+modificadores de acesso:
+\*[CODE]private\*[CODE X],
+\*[CODE]private protected\*[CODE X],
+\*[CODE]protected\*[CODE X],
+\*[CODE]internal\*[CODE X],
+\*[CODE]public\*[CODE X] e \*[CODE]file\*[CODE X]\&.
+O modificador \*[CODE]internal\*[CODE X] restringe a acessibilidade do
+membro à objetos que estão no mesmo \fIassembly\fP. \fIAssemblies\fP
+são uma forma de organizar manualmente classes do C#, para aumentar a
+velocidade de compilação.
+Um elemento modificado com \*[CODE]file\*[CODE X] só pode ser
+usado por outros elementos presentes no mesmo arquivo da declaração.
+Os modificadores \*[CODE]private\*[CODE X], \*[CODE]public\*[CODE X] e
+\*[CODE]protected\*[CODE X] cumprem seus papéis originais:
+respectivamente, limita visibilidade somente para dentro do tipo onde
+está, não limita visibilidade, e limita visibilidade às classes
+derivadas.
+Obviamente, reflexão pode contornar todas essas restrições.
 .HEADING 2 "Interfaces"
 .PP
 Implementação padrão
@@ -279,12 +325,18 @@ Interface principal
 Reuso de código (zero)
 .PP
 Métodos estáticos sobreescrevíveis.
-.HEADING 2 "Classes aninhadas"
+.HEADING 2 "Classes aninhadas e funções locais \(OK"
 .PP
-São bastante simples, literalmente uma classe declarada dentro de outra.
-Parecido com namespace. Acessibilidade muda.
-.PP
-Excelente forma de organizar código, tão legal quanto funções aninhadas.
+Classes aninhadas e funções locais são bastante simples, literalmente
+uma classe declarada dentro de outra, ou uma função declarada dentro
+de outro método. A classe aninhada possui menor visibilidade, sendo
+acessada de fora como se a classe que a contém fizesse parte do
+\fInamespace\fP. Não há equivalente no C# às classes aninhadas não
+estáticas do Java, que é quando a classe aninhada deve ser instanciada
+a partir de uma instância pré-existente da classe que a contém, e fica
+presa a ela e tem acesso aos seus membros. Funções locais são
+exclusivas para o método que as contém. No geral, ambos classes
+aninhadas e funções locasis são excelentes para organizar código.
 .HEADING 2 "Classes anônimas \(OK"
 .PP
 É possível criar objetos com atributos arbitrários, e fazer vetores
@@ -293,10 +345,20 @@ que esse objeto estenda uma classe e sobreescreva seus métodos.  No
 geral, não têm muita serventia. Seu uso é de mau gosto, bem como todos
 os usos de \*[CODE]var\*[CODE X]\&.  Geralmente é encontrado em
 gambiarras feitas correndo, como alguma seria\%li\%zação de dados, e
-usando muita reflexão, por sinal.
-.LISTING geojson "Um GeoJSON implementado com pouco esforço"
+usando muita reflexão, por sinal. A
+.PDF_LINK geojson "Listagem 2"
+é exemplo disso.
+.LISTING geojson "Impressão de GeoJSON implementada com pouco esforço"
 .so GeoJson.cs
 .LISTING OFF
+.HEADING 2 "Classes parciais \(OK"
+.PP
+A declaração de classes e \*[CODE]struct\*[CODE X]s pode ser espalhada
+em vários arquivos usando o modificador \*[CODE]partial\*[CODE X]\&. A
+única utilidade é separar código gerado de código autoral, quando T4
+estiver sendo utilizado, por exemplo. Os outros usos são forte
+indicativo de \fIcode smell\fP ou algum \fIanti-pattern\fP, como \fIgod
+object\fP, pois o tipo deve estar inchado e fazendo "demais".
 .HEADING 2 "Tipos genéricos"
 .PP
 Não há overload de tipos genéricos, eles são diferenciados em IL pela
@@ -340,34 +402,39 @@ A propriedade \*[CODE]Current\*[CODE X] do enumerador devolve uma referência co
 .\"kkk
 .\".TE
 .\".FLOAT OFF
-.HEADING 2 "Closures"
+.HEADING 2 "Closures \(OK"
 .PP
-Existem funções lambda em C#, porém a captura de objetos é anti-intuitiva!
+Existem expressões lambda em C#, porém a captura de objetos é anti-intuitiva!
 Linguagens como C++ permitem especificar como cada objeto é capturado, de modo
 que o usuário pode fazer cópias ou manter referências conforme adequado. Não é
 o caso no C#!
-.QUOTE
-.CODE
+.PP
+A execução da
+.PDF_LINK lambda "Listagem 4"
+imprimirá dez vezes o número dez, ao invés de uma sequência de zero
+até nove.  O que ocorre é que cada expressão lambda gera uma classe, e
+a expressão lambda em si se torna um método dessa classe, e os objetos
+capturados, atributos dessa classe. Essa implementação orientada a
+objetos de expressões lambda permite a persistência dos objetos, que
+posteriormente são limpos sob responsabilidade do coletor de lixo, mas
+gera comportamentos surpreendentes, como o da
+.PDF_LINK lambda SUFFIX : "Listagem 4"
+o laço de repetição itera sobre o atributo de um único objeto
+instanciado a partir da classe implícita, ao invés de uma variável
+local \*[CODE]i\*[CODE X], e no final todas as expressões lambda
+enxergam apenas o valor final dela.
+Por causa dessa limitação, expressões lambda deixam de ser tão úteis e
+simples. No final, escrever classes e métodos ordinários garante
+comportamentos previsíveis, e o desempenho é mais alto de qualquer
+modo.
+.LISTING lambda "Um tiro no pé usando expressões lambda"
 Action[] cbs = new Action[10];
 
 for (int i = 0; i < cbs.Length; i++)
     cbs[i] = () => Console.WriteLine(i);
 for (int i = 0; i < cbs.Length; i++)
     cbs[i]();
-.QUOTE END
-.PP
-A execução imprimirá dez vezes o número dez, ao invés de uma sequência de zero
-até nove.  O que ocorre é que cada função lambda gera uma classe, e a função em
-si se torna um método dessa classe e os objetos capturados, atributos dessa
-classe. Essa implementação orientada a objetos de funções lambda permite a
-persistência dos objetos, que posteriormente são limpos sob responsabilidade do
-coletor de lixo, mas gera comportamentos surpreendentes, como o do exemplo: o
-laço de repetição itera sobre o atributo da classe implícita, ao invés de uma
-variável local \*[CODE]i\*[CODE X], e no final todas as funções lambda enxergam
-apenas o valor final dela.
-Por causa dessa limitação, funções lambda deixam de ser tão úteis e simples. No
-final, escrever classes e métodos ordinários garante comportamentos
-previsíveis, e o desempenho é mais alto de qualquer modo.
+.LISTING OFF
 .HEADING 1 "Referências"
 .PP
 DIETRICH, Eric; SMACCHIA, Patrick. C# Version History: Examining the Language
